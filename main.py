@@ -1,4 +1,4 @@
-#Initialize memory, registers, timers
+#Initialization
 
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
@@ -26,14 +26,10 @@ def clear_display():
 		for item in array:
 			item = True;
 
-
-
 #Input - Hexidecimal keyboard created using list comprehension
 #Boolean because we only need to know if key has been pressed or not. Using hex
 #value because the keyboard is oringinally a hex one.
 keys = [False for x in range(0x10)]
-
-
 
 #Timers - count down until 0
 delay_timer = 0
@@ -48,18 +44,19 @@ def load_rom(filepath):
 	program_address = 0x200
 	clear_display()
 	with open(filepath, 'rb') as rom:
-		data = rom.read()
-		print data
+		data = rom.read().encode('hex')
+
+
 
 	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
 	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
-	# for byte in data:
-	# 	memory[program_address] = byte
-	# 	program_address += 1
-	#
-	# with open("test.txt", 'r+') as hex_dump:
-	# 	for value in memory:
-	# 		hex_dump.write(value)
+	for byte in data:
+		memory[program_address] = byte
+		program_address += 1
+
+	with open("hexdump.txt", 'r+') as hex_dump:
+		for value in memory:
+			hex_dump.write(str(value))
 
 
 
