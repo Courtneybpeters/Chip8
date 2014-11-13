@@ -1,7 +1,7 @@
 #Initialize memory, registers, timers
 
 #Must include sections so you don't have to code an offset
-#Bytes are in hex, memory is a list of bytes (8-bits) so it is much more helpful to be in hex.
+#Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
 memory = [0x00 for x in range(0x1000)]
 
 
@@ -29,7 +29,8 @@ def clear_display():
 
 
 #Input - Hexidecimal keyboard created using list comprehension
-#Boolean because we only need to know if key has been pressed or not. Using hex value because the keyboard is oringinally a hex one.
+#Boolean because we only need to know if key has been pressed or not. Using hex
+#value because the keyboard is oringinally a hex one.
 keys = [False for x in range(0x10)]
 
 
@@ -48,12 +49,17 @@ def load_rom(filepath):
 	clear_display()
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
+		print data
 
 	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
 	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
-	for byte in data:
-		memory[program_address] = byte
-		program_address += 1
+	# for byte in data:
+	# 	memory[program_address] = byte
+	# 	program_address += 1
+	#
+	# with open("test.txt", 'r+') as hex_dump:
+	# 	for value in memory:
+	# 		hex_dump.write(value)
 
 
 
@@ -67,6 +73,5 @@ def load_rom(filepath):
 
 #Main - TKinter to load rom
 if __name__ == "__main__":
-	filepath = raw_input("Enter the path of your rom: ")
-	load_rom(filepath)
-	
+	rom_path = raw_input("Enter the path of your rom: ")
+	load_rom(rom_path)
