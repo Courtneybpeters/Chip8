@@ -3,15 +3,16 @@
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so it is much more helpful to be in hex.
 memory = [0x00 for x in range(0x1000)]
+program_address = 0x200
 
+#Clears memory
 def clear_memory():
-	memory = [0x00 for x in range(0x1000)]
+	for byte in memory:
+		byte = 0x00
 
 
 #Registers
 registers = [0x00 for x in range(0x10)]
-
-
 
 
 #Display - 64 X 32
@@ -47,18 +48,21 @@ def load_rom(filepath):
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
 
+	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
+	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
 	for byte in data:
-		memory.append(byte)
+		memory[program_address] = byte
+		program_address += 1
 
 
 
 
-#Load rom
+#Load rom - is this really main???
 
-#Display loop (infinite)
+#Display loop (infinite) - use pygame
 
 	#Eventually - limit to 60 fps
 
 
-#Main 
+#Main - TKinter to load rom
 
