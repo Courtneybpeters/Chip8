@@ -3,7 +3,7 @@
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so it is much more helpful to be in hex.
 memory = [0x00 for x in range(0x1000)]
-program_address = 0x200
+
 
 #Clears memory
 def clear_memory():
@@ -25,11 +25,11 @@ def clear_display():
 	for array in display:
 		for item in array:
 			item = True;
-	
+
 
 
 #Input - Hexidecimal keyboard created using list comprehension
-#Boolean because we only need to know if key has been pressed or not. Using hex value because the keyboard is oringinally a hex one. 
+#Boolean because we only need to know if key has been pressed or not. Using hex value because the keyboard is oringinally a hex one.
 keys = [False for x in range(0x10)]
 
 
@@ -44,6 +44,7 @@ sound_timer = 0
 
 #Option to select rom
 def load_rom(filepath):
+	program_address = 0x200
 	clear_display()
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
@@ -65,4 +66,7 @@ def load_rom(filepath):
 
 
 #Main - TKinter to load rom
-
+if __name__ == "__main__":
+	filepath = raw_input("Enter the path of your rom: ")
+	load_rom(filepath)
+	
