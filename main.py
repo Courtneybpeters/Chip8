@@ -2,7 +2,6 @@
 
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so it is much more helpful to be in hex.
-#QUESTION - Should I make this an empty list when I initialize it?
 memory = [0x00 for x in range(0x1000)]
 
 def clear_memory():
@@ -30,7 +29,7 @@ def clear_display():
 
 #Input - Hexidecimal keyboard created using list comprehension
 #Boolean because we only need to know if key has been pressed or not. Using hex value because the keyboard is oringinally a hex one. 
-keys = [True for x in range(0x10)]
+keys = [False for x in range(0x10)]
 
 
 
@@ -45,7 +44,12 @@ sound_timer = 0
 #Option to select rom
 def load_rom(filepath):
 	clear_display()
-	rom = open(filepath, 'rb')
+	with open(filepath, 'rb') as rom:
+		data = rom.read()
+
+	for byte in data:
+		memory.append(byte)
+
 
 
 
@@ -54,3 +58,7 @@ def load_rom(filepath):
 #Display loop (infinite)
 
 	#Eventually - limit to 60 fps
+
+
+#Main 
+
