@@ -2,7 +2,12 @@
 
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so it is much more helpful to be in hex.
+#QUESTION - Should I make this an empty list when I initialize it?
 memory = [0x00 for x in range(0x1000)]
+
+def clear_memory():
+	memory = [0x00 for x in range(0x1000)]
+
 
 #Registers
 registers = [0x00 for x in range(0x10)]
@@ -15,6 +20,12 @@ registers = [0x00 for x in range(0x10)]
 display = [[True for x in range(32)] for x in range(64)]
 
 
+#Returns empty display - takes up less memory looping through than having two lists at once.
+def clear_display():
+	for array in display:
+		for item in array:
+			item = True;
+	
 
 
 #Input - Hexidecimal keyboard created using list comprehension
@@ -32,6 +43,11 @@ sound_timer = 0
 
 
 #Option to select rom
+def load_rom(filepath):
+	clear_display()
+	rom = open(filepath, 'rb')
+
+
 
 #Load rom
 
