@@ -14,6 +14,13 @@ def clear_memory():
 #Registers
 registers = [0x00 for x in range(0x10)]
 
+#Program counter so execution can jump to different points in memory.
+#Starts at where programs start within the memory.
+program_counter = 0x200
+
+#Stack - pretty much a bookmark for addresses with jumps of execution. Think LIFO
+stack = []
+
 
 #Display - 64 X 32
 #List comprehension of a list comprehension -- a 64 item array of 32 item arrays.
@@ -24,7 +31,7 @@ display = [[True for x in range(32)] for x in range(64)]
 def clear_display():
 	for array in display:
 		for item in array:
-			item = True;
+			item = True
 
 #Input - Hexidecimal keyboard created using list comprehension
 #Boolean because we only need to know if key has been pressed or not. Using hex
@@ -54,9 +61,17 @@ def load_rom(filepath):
 		memory[program_address] = ord(byte)
 		program_address += 1
 
-	with open("hexdump.txt", 'w') as hex_dump:
+
+def hex_dump(file, memory):
+	line_wrap = 0
+	with open(file, 'w') as hex_dump:
 		for value in memory:
+			if line_wrap % 16 == 0:
+				hex_dump.write(hex(line_wrap)[2:].upper().zfill(3) + ': ')
 			hex_dump.write(hex(value)[2:].upper().zfill(2) + ' ')
+			line_wrap += 1
+			if line_wrap % 16 == 0:
+				hex_dump.write('\n')
 
 
 
@@ -72,3 +87,4 @@ def load_rom(filepath):
 if __name__ == "__main__":
 	rom_path = raw_input("Enter the path of your rom: ")
 	load_rom(rom_path)
+	hex_dump("hexdump.txt", memory)
