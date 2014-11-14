@@ -44,19 +44,19 @@ def load_rom(filepath):
 	program_address = 0x200
 	clear_display()
 	with open(filepath, 'rb') as rom:
-		data = rom.read().encode('hex')
+		data = rom.read()
 
 
 
 	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
 	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
 	for byte in data:
-		memory[program_address] = byte
+		memory[program_address] = ord(byte)
 		program_address += 1
 
-	with open("hexdump.txt", 'r+') as hex_dump:
+	with open("hexdump.txt", 'w') as hex_dump:
 		for value in memory:
-			hex_dump.write(str(value))
+			hex_dump.write(hex(value)[2:].upper().zfill(2) + ' ')
 
 
 
