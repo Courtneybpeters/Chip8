@@ -27,11 +27,7 @@ stack = []
 display = [[True for x in range(32)] for x in range(64)]
 
 
-#Returns empty display - takes up less memory looping through than having two lists at once.
-def clear_display():
-	for array in display:
-		for item in array:
-			item = True
+
 
 #Input - Hexidecimal keyboard created using list comprehension
 #Boolean because we only need to know if key has been pressed or not. Using hex
@@ -43,8 +39,6 @@ delay_timer = 0
 
 #Sound is played only when this is at 0
 sound_timer = 0
-
-
 
 #Option to select rom
 def load_rom(filepath):
@@ -73,8 +67,34 @@ def hex_dump(file, memory):
 			if line_wrap % 16 == 0:
 				hex_dump.write('\n')
 
+# ----------------- Opcodes -----------------------------------
+
+#00E0
+#Returns empty display - takes up less memory looping through than having
+#two lists at once.
+def clear_display():
+	for array in display:
+		for item in array:
+			item = True
 
 
+#00EE - Returns from subroutine (aka a jump in execution.)
+def return_address():
+	program_counter = stack.pop(-1)
+
+
+
+#1NNN - Jumps to a certain address
+def address_jump(address):
+	stack.append(program_counter)
+	program_counter = address
+
+
+
+
+
+
+#----------------------------------------------------------------
 
 #Load rom - is this really main???
 
