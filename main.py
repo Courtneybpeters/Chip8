@@ -16,7 +16,7 @@ registers = [0x00 for x in range(0x10)]
 
 #Program counter so execution can jump to different points in memory.
 #Starts at where programs start within the memory.
-program_counter = 0x200
+I = 0x200
 
 #Stack - pretty much a bookmark for addresses with jumps of execution. Think LIFO
 stack = []
@@ -39,6 +39,9 @@ delay_timer = 0
 
 #Sound is played only when this is at 0
 sound_timer = 0
+
+#Opcode variable needs to be global
+op_code = "This should get changed"
 
 #Option to select rom
 def load_rom(filepath):
@@ -67,6 +70,9 @@ def hex_dump(file, memory):
 			if line_wrap % 16 == 0:
 				hex_dump.write('\n')
 
+#
+
+
 # ----------------- Opcodes -----------------------------------
 
 #00E0
@@ -80,14 +86,26 @@ def clear_display():
 
 #00EE - Returns from subroutine (aka a jump in execution.)
 def return_address():
-	program_counter = stack.pop(-1)
-
+	I = stack.pop(-1)
 
 
 #1NNN - Jumps to a certain address
 def address_jump(address):
-	stack.append(program_counter)
-	program_counter = address
+	I = address
+
+
+#2NNN - Calls subroutine at that address
+def subroutine(address):
+	stack.append(I)
+	I = address
+
+#3XNN -
+def skip_if_equal(register, value):
+	if registers[register] == value:
+		#Add two because each opcode is two bytes (2 hex values)
+		I += 2
+
+
 
 
 
@@ -96,7 +114,22 @@ def address_jump(address):
 
 #----------------------------------------------------------------
 
-#Load rom - is this really main???
+#Main - read and parse opcodes out of memory.
+def parser():
+	global I
+	I += 2
+	first_byte = hex(memory[I])
+	second_byte = hex(memory[I+1])
+	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
+	nnn = int(op_code[1:], 16)
+	nn = int(op_code[2:], 16)
+	n = int(op_code[3], 16)
+	x = int(op_code[1], 16)
+	y = int(op_code[2], 16)
+	print "opcode: %r, nnn: %r, nn: %r, n: %r, x: %r, y: %r" % (op_code, nnn, nn, n, x, y)
+
+
+
 
 #Display loop (infinite) - use pygame
 
@@ -108,3 +141,6 @@ if __name__ == "__main__":
 	rom_path = raw_input("Enter the path of your rom: ")
 	load_rom(rom_path)
 	hex_dump("hexdump.txt", memory)
+	parser()
+	# print "Opcode: ", op_code
+	# print "Opcode type: ", type(op_code)
