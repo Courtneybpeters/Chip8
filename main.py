@@ -44,7 +44,6 @@ sound_timer = 0
 
 #Option to select rom
 def load_rom(filepath):
-	program_address = 0x200
 	clear_display()
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
@@ -69,4 +68,3 @@ def load_rom(filepath):
 if __name__ == "__main__":
 	filepath = raw_input("Enter the path of your rom: ")
 	load_rom(filepath)
-	
