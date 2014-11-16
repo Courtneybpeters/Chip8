@@ -137,14 +137,9 @@ def parser():
 
 #Main - TKinter to load rom
 if __name__ == "__main__":
-<<<<<<< HEAD
-	filepath = raw_input("Enter the path of your rom: ")
-	load_rom(filepath)
-=======
 	rom_path = raw_input("Enter the path of your rom: ")
 	load_rom(rom_path)
 	hex_dump("hexdump.txt", memory)
 	parser()
 	# print "Opcode: ", op_code
 	# print "Opcode type: ", type(op_code)
->>>>>>> 4dfeffc484481db61092c0353608dfd59255e8e0
