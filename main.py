@@ -45,7 +45,6 @@ op_code = "This should get changed"
 
 #Option to select rom
 def load_rom(filepath):
-	program_address = 0x200
 	clear_display()
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
