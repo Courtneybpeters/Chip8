@@ -114,18 +114,29 @@ def skip_if_equal(register, value):
 
 #----------------------------------------------------------------
 
+finished = False
+
 #Main - read and parse opcodes out of memory.
 def parser():
 	global I
+	global finished
 	I += 2
 	first_byte = hex(memory[I])
 	second_byte = hex(memory[I+1])
+	#Opcode is a string
 	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
+
+	if op_code == "0000":
+		finished = True
+		return
+
+	#These are integers
 	nnn = int(op_code[1:], 16)
 	nn = int(op_code[2:], 16)
 	n = int(op_code[3], 16)
 	x = int(op_code[1], 16)
 	y = int(op_code[2], 16)
+
 	print "opcode: %r, nnn: %r, nn: %r, n: %r, x: %r, y: %r" % (op_code, nnn, nn, n, x, y)
 
 
@@ -141,6 +152,5 @@ if __name__ == "__main__":
 	rom_path = raw_input("Enter the path of your rom: ")
 	load_rom(rom_path)
 	hex_dump("hexdump.txt", memory)
-	parser()
-	# print "Opcode: ", op_code
-	# print "Opcode type: ", type(op_code)
+	while not finished:
+		parser()
