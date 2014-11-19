@@ -1,4 +1,5 @@
 #Initialization
+finished = False
 
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
@@ -41,21 +42,20 @@ delay_timer = 0
 sound_timer = 0
 
 #Opcode variable needs to be global
-op_code = "This should get changed"
+op_code = ''
 
 #Option to select rom
 def load_rom(filepath):
 	clear_display()
+	global I
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
-
-
 
 	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
 	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
 	for byte in data:
-		memory[program_address] = ord(byte)
-		program_address += 1
+		memory[I] = ord(byte)
+		I += 1
 
 
 def hex_dump(file, memory):
@@ -68,8 +68,6 @@ def hex_dump(file, memory):
 			line_wrap += 1
 			if line_wrap % 16 == 0:
 				hex_dump.write('\n')
-
-#
 
 
 # ----------------- Opcodes -----------------------------------
@@ -98,7 +96,7 @@ def subroutine(address):
 	stack.append(I)
 	I = address
 
-#3XNN -
+#3XNN - Skip if equal to NN
 def skip_if_equal(register, value):
 	if registers[register] == value:
 		#Add two because each opcode is two bytes (2 hex values)
@@ -107,16 +105,17 @@ def skip_if_equal(register, value):
 
 
 
-
-
-
-
 #----------------------------------------------------------------
 
 #Main - read and parse opcodes out of memory.
-def parser():
+def step():
 	global I
 	I += 2
+
+	if I == 0x1000:
+		finished = True
+		return
+
 	first_byte = hex(memory[I])
 	second_byte = hex(memory[I+1])
 	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
@@ -125,8 +124,25 @@ def parser():
 	n = int(op_code[3], 16)
 	x = int(op_code[1], 16)
 	y = int(op_code[2], 16)
-	print "opcode: %r, nnn: %r, nn: %r, n: %r, x: %r, y: %r" % (op_code, nnn, nn, n, x, y)
 
+	#Handles '0' opcodes
+	# if op_code[0] == "0":
+	# 	if op_code == "00E0":
+	# 		clear_display()
+	# 	if op_code == "00EE":
+	# 		return_address()
+	#
+	# if op_code[0] == "1":
+	# 	address_jump(nnn)
+	#
+	# if op_code[0] == "2":
+	# 	subroutine(nnn)
+	#
+	# if op_code[0] == "3":
+		#Register will be x (register, ) and nn will be value
+
+
+	print op_code
 
 
 
@@ -140,6 +156,7 @@ if __name__ == "__main__":
 	rom_path = raw_input("Enter the path of your rom: ")
 	load_rom(rom_path)
 	hex_dump("hexdump.txt", memory)
-	parser()
+	while not finished:
+		step()
 	# print "Opcode: ", op_code
 	# print "Opcode type: ", type(op_code)
