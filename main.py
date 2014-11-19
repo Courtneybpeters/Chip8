@@ -97,7 +97,14 @@ def subroutine(address):
 #3XNN - Skip if equal to NN
 def skip_if_equal(register, value):
 	if registers[register] == value:
-		#Add two because each opcode is two bytes (2 hex values)
+
+		#Add 2 because each opcode is two bytes (2 hex values) and we already
+		#added two within the step function to get to the rest of the opcode
+		I += 2
+
+#4XNN - Skip if not equal to NN
+def skip_if_unequal(register, value):
+	if registers[register] != value:
 		I += 2
 
 
@@ -137,20 +144,24 @@ def step():
 	I += 2
 
 	#Handles '0' opcodes
-	# if op_code[0] == "0":
-	# 	if op_code == "00E0":
-	# 		clear_display()
-	# 	if op_code == "00EE":
-	# 		return_address()
-	#
-	# if op_code[0] == "1":
-	# 	address_jump(nnn)
-	#
-	# if op_code[0] == "2":
-	# 	subroutine(nnn)
-	#
-	# if op_code[0] == "3":
-		#Register will be x (register, ) and nn will be value
+	if op_code[0] == "0":
+		if op_code == "00E0":
+			clear_display()
+		if op_code == "00EE":
+			return_address()
+
+	if op_code[0] == "1":
+		address_jump(nnn)
+
+	if op_code[0] == "2":
+		subroutine(nnn)
+
+	if op_code[0] == "3":
+		skip_if_equal(x, nn)
+
+	if op_code[0] == "4":
+		skip_if_unequal(x, nn)
+
 
 	print op_code
 
