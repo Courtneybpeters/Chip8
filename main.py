@@ -1,3 +1,5 @@
+#Address QUESTIONs and TODOs
+
 #Initialization
 finished = False
 
@@ -68,7 +70,7 @@ def hex_dump(file, memory):
 				hex_dump.write('\n')
 
 
-# ----------------- Opcodes -----------------------------------
+# ----------------------- Opcodes -----------------------------------
 
 #00E0
 #Returns empty display - takes up less memory looping through than having
@@ -107,10 +109,26 @@ def skip_if_unequal(register, value):
 	if registers[register] != value:
 		I += 2
 
+#5XY0 - Skips instruction if two registers are equal
+def register_equal_skip(a, b):
+	if register[a] == register[b]:
+		I += 2
+
+#6XNN - Sets register to a value
+def set_register(register, value):
+	registers[register] = hex(value)
+
+#7XNN - Adds to a register
+def register_add(register, value):
+	registers[register] += value
+
+#8XY0 - Sets register - OR
+def register_or(a, b):
 
 
 
-#----------------------------------------------------------------
+
+#------------------------ End of Opcodes -------------------------
 
 #Step parses out opcodes and calls the appropriate function.
 def step():
@@ -130,20 +148,17 @@ def step():
 	#Opcode is a string
 	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
 
-	# if op_code == "0000":
-	# 	finished = True
-	# 	return
-
-	#These are integers
+	#Values within opcodes
 	nnn = int(op_code[1:], 16)
 	nn = int(op_code[2:], 16)
 	n = int(op_code[3], 16)
 	x = int(op_code[1], 16)
 	y = int(op_code[2], 16)
 
+	#Increment I
 	I += 2
 
-	#Handles '0' opcodes
+	#Directing to correct opcodes
 	if op_code[0] == "0":
 		if op_code == "00E0":
 			clear_display()
@@ -153,14 +168,44 @@ def step():
 	if op_code[0] == "1":
 		address_jump(nnn)
 
-	if op_code[0] == "2":
+	elif op_code[0] == "2":
 		subroutine(nnn)
 
-	if op_code[0] == "3":
+	elif op_code[0] == "3":
 		skip_if_equal(x, nn)
 
-	if op_code[0] == "4":
+	elif op_code[0] == "4":
 		skip_if_unequal(x, nn)
+
+	elif op_code[0] == "5":
+		register_equal_skip(x, y)
+
+	elif op_code[0] == "6":
+		set_register(x, nn)
+
+	elif op_code[0] == "7":
+		register_add(x, nn)
+
+	elif op_code[0] == "8":
+		if op_code[3] == "0":
+
+
+		if op_code[3] == "1":
+
+		if op_code[3] == "2":
+
+		if op_code[3] == "3":
+
+		if op_code[3] == "4":
+
+		if op_code[3] == "5":
+
+		if op_code[3] == "6":
+
+		if op_code[3] == "7":
+
+		if op_code[3] == "E":
+
 
 
 	print op_code
