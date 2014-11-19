@@ -107,9 +107,12 @@ def skip_if_equal(register, value):
 
 #----------------------------------------------------------------
 
+finished = False
+
 #Main - read and parse opcodes out of memory.
 def step():
 	global I
+	global finished
 	I += 2
 
 	if I == 0x1000:
@@ -118,7 +121,14 @@ def step():
 
 	first_byte = hex(memory[I])
 	second_byte = hex(memory[I+1])
+	#Opcode is a string
 	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
+
+	if op_code == "0000":
+		finished = True
+		return
+
+	#These are integers
 	nnn = int(op_code[1:], 16)
 	nn = int(op_code[2:], 16)
 	n = int(op_code[3], 16)
