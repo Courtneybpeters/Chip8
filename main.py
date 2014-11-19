@@ -28,8 +28,6 @@ stack = []
 display = [[True for x in range(32)] for x in range(64)]
 
 
-
-
 #Input - Hexidecimal keyboard created using list comprehension
 #Boolean because we only need to know if key has been pressed or not. Using hex
 #value because the keyboard is oringinally a hex one.
@@ -47,15 +45,15 @@ op_code = ''
 #Option to select rom
 def load_rom(filepath):
 	clear_display()
-	global I
+	address = I
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
 
 	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
 	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
 	for byte in data:
-		memory[I] = ord(byte)
-		I += 1
+		memory[address] = ord(byte)
+		address += 1
 
 
 def hex_dump(file, memory):
@@ -107,14 +105,15 @@ def skip_if_equal(register, value):
 
 #----------------------------------------------------------------
 
-finished = False
-
-#Main - read and parse opcodes out of memory.
+#Step parses out opcodes and calls the appropriate function.
 def step():
 	global I
 	global finished
-	I += 2
 
+	print "I = ", I
+
+	#QUESTION -- doing this so then i don't have the issue of trying to parse a
+	#opcode outside of memory.
 	if I == 0x1000:
 		finished = True
 		return
@@ -124,9 +123,9 @@ def step():
 	#Opcode is a string
 	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
 
-	if op_code == "0000":
-		finished = True
-		return
+	# if op_code == "0000":
+	# 	finished = True
+	# 	return
 
 	#These are integers
 	nnn = int(op_code[1:], 16)
@@ -134,6 +133,8 @@ def step():
 	n = int(op_code[3], 16)
 	x = int(op_code[1], 16)
 	y = int(op_code[2], 16)
+
+	I += 2
 
 	#Handles '0' opcodes
 	# if op_code[0] == "0":
@@ -151,9 +152,7 @@ def step():
 	# if op_code[0] == "3":
 		#Register will be x (register, ) and nn will be value
 
-
 	print op_code
-
 
 
 #Display loop (infinite) - use pygame
@@ -166,7 +165,11 @@ if __name__ == "__main__":
 	rom_path = raw_input("Enter the path of your rom: ")
 	load_rom(rom_path)
 	hex_dump("hexdump.txt", memory)
+	count = 0
 	while not finished:
 		step()
+		count += 1
+		if count == 10:
+			break
 	# print "Opcode: ", op_code
 	# print "Opcode type: ", type(op_code)
