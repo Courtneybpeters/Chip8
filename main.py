@@ -1,4 +1,8 @@
-#Address QUESTIONs and TODOs
+import random
+
+#Address QUESTIONs and TODO (Ctrl+ Shift + T)
+
+#TODO Cowgod reference - diff between program counter and I (is I the stack?)
 
 #Initialization
 finished = False
@@ -87,6 +91,9 @@ def return_address():
 
 
 #1NNN - Jumps to a certain address
+#TODO - I think this is wrong because it seems very similar to ANNN
+#Is this one supposed to break out or something...
+#Do I need to go to the instruction at that address and execute that?
 def address_jump(address):
 	I = address
 
@@ -120,7 +127,7 @@ def set_register(register, value):
 
 #7XNN - Adds to a register
 def register_add_value(register, value):
-	registers[register] += value
+	registers[register] += hex(value)
 
 #8XY0 - Sets register to the value of the other register
 def register_a_b_set(a, b):
@@ -149,7 +156,7 @@ def add_two_registers(a, b):
 	registers[a] = hex(registers[a] + registers[b])
 
 #8XY5 - Subtracts x from y, register f = 1
-def minus_two_registers(a, b):
+def registers_subtract(a, b):
 	if registers[a] > registers[b]:
 		registers[0xF] = 0x01
 
@@ -157,6 +164,53 @@ def minus_two_registers(a, b):
 		registers[0xF] = 0x00
 
 	registers[a] = hex(registers[a] - registers[b])
+
+#8XY6 - Shift register to the right by one
+#TODO: shift_right function
+def shift_right(register):
+
+#8XY7 - Subtracts a from b, negative subtraction
+def registers_neg_subtract(a, b):
+	if registers[b] > registers[a]:
+		registers[0xF] = 0x01
+
+	else:
+		registers[0xF] = 0x00
+
+	register[a] = hex(registers[b] - registers[a])
+
+#8XYE - Shifts register left
+#TODO - Shift_left function
+def shift_left(register):
+
+
+#9XY0 - Skip instruction if a doesn't equal b
+def register_unequal_skip(a, b):
+	if registers[a] != registers[b]:
+		I += 2
+
+#ANNN - Sets I to a certain address
+def set_I(address):
+	I = address
+
+#BNNN - Jumps to address of nnn + the first register
+def jump_first_reg(value):
+	I = value + registers[0x0]
+
+#CXNN - Set register to a value + random number
+def jump_random(register, value):
+	random = hex(random.randrange(255))
+	registers[register] = hex(value & random)
+
+#TODO DXYN
+
+#TODO EX9E
+
+#TODO EXA1
+
+#FX07 - Set register to value of timer
+def set_reg_to_delay(register):
+	registers[register] = delay_timer
 
 
 
@@ -239,14 +293,45 @@ def step():
 			add_two_registers(x, y)
 
 		if op_code[3] == "5":
-			minus_two_registers(x, y)
+			registers_subtract(x, y)
 
 
 		if op_code[3] == "6":
+			shift_right(x)
 
 		if op_code[3] == "7":
+			registers_neg_subtract(x, y)
 
 		if op_code[3] == "E":
+
+	elif op_code[0] == "9":
+		register_unequal_skip(x, y)
+
+	elif op_code[0] == "A":
+		set_I(nnn)
+
+	elif op_code[0] == "B":
+		jump_first_reg(nnn)
+
+	elif op_code[0] == "C":
+		jump_random(x, nn)
+
+	elif op_code[0] == "D":
+
+	elif op_code[0] == "E":
+		if op_code[3] == "E":
+
+		else:
+
+	#Multiple F opcodes
+	elif op_code[0] == "F":
+		if op_code[3] == "7":
+			set_reg_to_delay(x)
+
+		elif op_code[3] == "A":
+
+
+
 
 
 
