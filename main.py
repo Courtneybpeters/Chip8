@@ -212,7 +212,23 @@ def jump_random(register, value):
 def set_reg_to_delay(register):
 	registers[register] = delay_timer
 
+#FX0A - Stores key pressed in a register (raw_input pretty much)
+#TODO - Keys via keyboard or on screen keys?
+def input_to_register(register):
+	registers[register] = hex(raw_input())
 
+#FX15 - Sets delay timer to the value of register x
+def set_delay_timer(register):
+	delay_timer = registers[register]
+
+#FX18 - Sets sound timer to value of register x
+def set_sound_timer(register):
+	sound_timer = registers[register]'
+
+#FX1E - Adds register to I - I is the stack, is it not
+#XXX - I am acting under the assumption I is the stack
+def add_to_stack(register):
+	
 
 
 #------------------------ End of Opcodes -------------------------
@@ -329,6 +345,19 @@ def step():
 			set_reg_to_delay(x)
 
 		elif op_code[3] == "A":
+			input_to_register(x)
+
+		elif op_code[2:3] == "15":
+			set_delay_timer(x)
+
+		elif op_code[3] == "8":
+			set_sound_timer(x)
+
+		elif op_code[3] == "E":
+
+
+
+
 
 
 
