@@ -119,12 +119,36 @@ def set_register(register, value):
 	registers[register] = hex(value)
 
 #7XNN - Adds to a register
-def register_add(register, value):
+def register_add_value(register, value):
 	registers[register] += value
 
-#8XY0 - Sets register - OR
-def register_or(a, b):
+#8XY0 - Sets register to the value of the other register
+def register_a_b_set(a, b):
+	register[a] = register[b]
 
+#8XY1 - Bitwise OR two registers
+def or_register(a, b):
+	register[a] = hex(register[a] | register[b])
+
+#8XY2 - Bitwise AND two registers
+def and_register(a, b):
+	register[a] = hex(register[a] & register[b])
+
+#8XY3 - Bitwise XOR two registers
+def xor_register(a, b):
+	register[a] = hex(register[a] ^ register[b])
+
+#8XY4 - Add register b to a, register f == 1 if there is a carry, else 0
+def add_two_registers(a, b):
+	if register[a] + register[b] > 255:
+		register[15] = 0x01
+
+	else:
+		register[15] = 0x00
+
+	register[a] = hex(register[a] + register[b])
+
+#8XY5 - 
 
 
 
@@ -159,6 +183,8 @@ def step():
 	I += 2
 
 	#Directing to correct opcodes
+
+	#Multiple 0 opcodes
 	if op_code[0] == "0":
 		if op_code == "00E0":
 			clear_display()
@@ -184,19 +210,24 @@ def step():
 		set_register(x, nn)
 
 	elif op_code[0] == "7":
-		register_add(x, nn)
+		register_add_value(x, nn)
 
+	#Multiple 8 opcodes
 	elif op_code[0] == "8":
 		if op_code[3] == "0":
-
+			register_a_b_set(x, y)
 
 		if op_code[3] == "1":
+			or_register(x, y)
 
 		if op_code[3] == "2":
+			and_register(x, y)
 
 		if op_code[3] == "3":
+			xor_register(x, y)
 
 		if op_code[3] == "4":
+
 
 		if op_code[3] == "5":
 
