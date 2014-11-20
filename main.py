@@ -111,7 +111,7 @@ def skip_if_unequal(register, value):
 
 #5XY0 - Skips instruction if two registers are equal
 def register_equal_skip(a, b):
-	if register[a] == register[b]:
+	if register[a] == registers[b]:
 		I += 2
 
 #6XNN - Sets register to a value
@@ -124,31 +124,40 @@ def register_add_value(register, value):
 
 #8XY0 - Sets register to the value of the other register
 def register_a_b_set(a, b):
-	register[a] = register[b]
+	registers[a] = registers[b]
 
 #8XY1 - Bitwise OR two registers
 def or_register(a, b):
-	register[a] = hex(register[a] | register[b])
+	registers[a] = hex(registers[a] | registers[b])
 
 #8XY2 - Bitwise AND two registers
 def and_register(a, b):
-	register[a] = hex(register[a] & register[b])
+	registers[a] = hex(registers[a] & registers[b])
 
 #8XY3 - Bitwise XOR two registers
 def xor_register(a, b):
-	register[a] = hex(register[a] ^ register[b])
+	registers[a] = hex(registers[a] ^ registers[b])
 
 #8XY4 - Add register b to a, register f == 1 if there is a carry, else 0
 def add_two_registers(a, b):
-	if register[a] + register[b] > 255:
-		register[15] = 0x01
+	if registers[a] + registers[b] > 255:
+		registers[0xF] = 0x01
 
 	else:
-		register[15] = 0x00
+		registers[0xF] = 0x00
 
-	register[a] = hex(register[a] + register[b])
+	registers[a] = hex(registers[a] + registers[b])
 
-#8XY5 - 
+#8XY5 - Subtracts x from y, register f = 1
+def minus_two_registers(a, b):
+	if registers[a] > registers[b]:
+		registers[0xF] = 0x01
+
+	else:
+		registers[0xF] = 0x00
+
+	registers[a] = hex(registers[a] - registers[b])
+
 
 
 
@@ -227,9 +236,11 @@ def step():
 			xor_register(x, y)
 
 		if op_code[3] == "4":
-
+			add_two_registers(x, y)
 
 		if op_code[3] == "5":
+			minus_two_registers(x, y)
+
 
 		if op_code[3] == "6":
 
