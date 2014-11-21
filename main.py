@@ -3,27 +3,37 @@ import random
 #Address QUESTIONs and TODO (Ctrl+ Shift + T)
 
 #TODO Cowgod reference - diff between program counter and I (is I the stack?)
+#I is my program counter according to cow god ref
 
-#Initialization
+#--------------------- Initialization --------------------------------------
 finished = False
 
 #Must include sections so you don't have to code an offset
 #Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
 memory = [0x00 for x in range(0x1000)]
 
-
 #Clears memory
 def clear_memory():
 	for byte in memory:
 		byte = 0x00
 
-
 #Registers
+#QUESTION - can this hex value be written as 0x0 because it will never go above 15 aka F?
+#or is it because its 8-bits (aka two hex values?)
 registers = [0x00 for x in range(0x10)]
+
+#Register I - used for drawing
+I = 0x0000
 
 #Program counter so execution can jump to different points in memory.
 #Starts at where programs start within the memory.
-I = 0x200
+PC = 0x200
+
+#Timers - count down until 0
+delay_timer = 0
+
+#Sound is played only when this is at 0
+sound_timer = 0
 
 #Stack - pretty much a bookmark for addresses with jumps of execution. Think LIFO
 stack = []
@@ -39,14 +49,12 @@ display = [[True for x in range(32)] for x in range(64)]
 #value because the keyboard is oringinally a hex one.
 keys = [False for x in range(0x10)]
 
-#Timers - count down until 0
-delay_timer = 0
-
-#Sound is played only when this is at 0
-sound_timer = 0
-
 #Opcode variable needs to be global
 op_code = ''
+
+
+
+#-------------------------- Loading Rom --------------------------------
 
 #Option to select rom
 def load_rom(filepath):
@@ -56,7 +64,6 @@ def load_rom(filepath):
 		data = rom.read()
 
 	#For each value in data, add it in the memory list. Add 1 so it starts from the program section of the memory.
-	#QUESTION - First 0-512(0x200) is for the interpreter, correct?
 	for byte in data:
 		memory[address] = ord(byte)
 		address += 1
@@ -76,9 +83,8 @@ def hex_dump(file, memory):
 
 # ----------------------- Opcodes -----------------------------------
 
-#00E0
-#Returns empty display - takes up less memory looping through than having
-#two lists at once.
+#00E0 - Returns empty display -
+#takes up less memory looping through than having two lists at once.
 def clear_display():
 	for array in display:
 		for item in array:
@@ -122,6 +128,7 @@ def register_equal_skip(a, b):
 		I += 2
 
 #6XNN - Sets register to a value
+
 def set_register(register, value):
 	registers[register] = hex(value)
 
@@ -228,7 +235,7 @@ def set_sound_timer(register):
 #FX1E - Adds register to I - I is the stack, is it not
 #XXX - I am acting under the assumption I is the stack
 def add_to_stack(register):
-	
+	stack = hex(stack + registers[register])
 
 
 #------------------------ End of Opcodes -------------------------
@@ -354,6 +361,19 @@ def step():
 			set_sound_timer(x)
 
 		elif op_code[3] == "E":
+			add_to_stack(x)
+
+		elif op_code[3] == "9":
+
+		elif op_code[3] == "3":
+
+		elif op_code[2:3] == "55":
+
+		elif op_code[2:3] == "65":
+
+
+
+
 
 
 
