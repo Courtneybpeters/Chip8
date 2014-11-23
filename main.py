@@ -59,7 +59,7 @@ op_code = ''
 #Option to select rom
 def load_rom(filepath):
 	clear_display()
-	address = I
+	address = PC
 	with open(filepath, 'rb') as rom:
 		data = rom.read()
 
@@ -93,7 +93,7 @@ def clear_display():
 
 #00EE - Returns from subroutine (aka a jump in execution.)
 def return_address():
-	I = stack.pop(-1)
+	PC = stack.pop(-1)
 
 
 #1NNN - Jumps to a certain address
@@ -101,13 +101,13 @@ def return_address():
 #Is this one supposed to break out or something...
 #Do I need to go to the instruction at that address and execute that?
 def address_jump(address):
-	I = address
+	PC = address
 
 
 #2NNN - Calls subroutine at that address
 def subroutine(address):
-	stack.append(I)
-	I = address
+	stack.append(PC)
+	PC = address
 
 #3XNN - Skip if equal to NN
 def skip_if_equal(register, value):
@@ -115,17 +115,17 @@ def skip_if_equal(register, value):
 
 		#Add 2 because each opcode is two bytes (2 hex values) and we already
 		#added two within the step function to get to the rest of the opcode
-		I += 2
+		PC += 2
 
 #4XNN - Skip if not equal to NN
 def skip_if_unequal(register, value):
 	if registers[register] != value:
-		I += 2
+		PC += 2
 
 #5XY0 - Skips instruction if two registers are equal
 def register_equal_skip(a, b):
 	if register[a] == registers[b]:
-		I += 2
+		PC += 2
 
 #6XNN - Sets register to a value
 
@@ -194,7 +194,7 @@ def shift_left(register):
 #9XY0 - Skip instruction if a doesn't equal b
 def register_unequal_skip(a, b):
 	if registers[a] != registers[b]:
-		I += 2
+		PC += 2
 
 #ANNN - Sets I to a certain address
 def set_I(address):
@@ -202,7 +202,7 @@ def set_I(address):
 
 #BNNN - Jumps to address of nnn + the first register
 def jump_first_reg(value):
-	I = value + registers[0x0]
+	PC = value + registers[0x0]
 
 #CXNN - Set register to a value + random number
 def jump_random(register, value):
@@ -242,19 +242,19 @@ def add_to_stack(register):
 
 #Step parses out opcodes and calls the appropriate function.
 def step():
-	global I
+	global PC
 	global finished
 
-	print "I = ", I
+	print "PC = ", PC
 
 	#QUESTION -- doing this so then i don't have the issue of trying to parse a
 	#opcode outside of memory.
-	if I == 0x1000:
+	if PC == 0x1000:
 		finished = True
 		return
 
-	first_byte = hex(memory[I])
-	second_byte = hex(memory[I+1])
+	first_byte = hex(memory[PC])
+	second_byte = hex(memory[PC+1])
 	#Opcode is a string
 	op_code = first_byte[2:].zfill(2).upper() + second_byte[2:].zfill(2).upper()
 
@@ -265,8 +265,8 @@ def step():
 	x = int(op_code[1], 16)
 	y = int(op_code[2], 16)
 
-	#Increment I
-	I += 2
+	#Increment Program Counter (PC)
+	PC += 2
 
 	#Directing to correct opcodes
 
