@@ -97,9 +97,6 @@ def return_address():
 
 
 #1NNN - Jumps to a certain address
-#TODO - I think this is wrong because it seems very similar to ANNN
-#Is this one supposed to break out or something...
-#Do I need to go to the instruction at that address and execute that?
 def address_jump(address):
 	PC = address
 
@@ -232,10 +229,34 @@ def set_delay_timer(register):
 def set_sound_timer(register):
 	sound_timer = registers[register]'
 
-#FX1E - Adds register to I - I is the stack, is it not
-#XXX - I am acting under the assumption I is the stack
+#FX1E - Adds register and value of I and sets result as I
 def add_to_stack(register):
-	stack = hex(stack + registers[register])
+	I = hex(I + registers[register])
+
+#FX29 - location of sprite
+#TODO
+
+#FX33 - Binary coded decimal representation
+#TODO
+
+#FX55 - Stores group of registers in memory
+def store_reg_in_mem(end):
+	location = I
+	for register in range(hex(end + 1)):
+		memory[location] = registers[register]
+		location += 2
+
+#FX65 - Reads group of registers from memory
+#QUESTION
+#Won't I need to return something?
+#Or do I need to make a list and then alter it and clear it within this function
+def read_from_memory(end):
+	location = I
+	for register in range(hex(end + 1)):
+
+
+
+
 
 
 #------------------------ End of Opcodes -------------------------
@@ -346,6 +367,7 @@ def step():
 
 		else:
 
+
 	#Multiple F opcodes
 	elif op_code[0] == "F":
 		if op_code[3] == "7":
@@ -368,21 +390,10 @@ def step():
 		elif op_code[3] == "3":
 
 		elif op_code[2:3] == "55":
+			store_reg_in_mem(x)
 
 		elif op_code[2:3] == "65":
-
-
-
-
-
-
-
-
-
-
-
-
-
+			read_from_memory(x)
 
 	print op_code
 
