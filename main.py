@@ -172,6 +172,7 @@ def registers_subtract(a, b):
 #8XY6 - Shift register to the right by one
 #TODO: shift_right function
 def shift_right(register):
+	return
 
 #8XY7 - Subtracts a from b, negative subtraction
 def registers_neg_subtract(a, b):
@@ -186,7 +187,7 @@ def registers_neg_subtract(a, b):
 #8XYE - Shifts register left
 #TODO - Shift_left function
 def shift_left(register):
-
+	return
 
 #9XY0 - Skip instruction if a doesn't equal b
 def register_unequal_skip(a, b):
@@ -227,7 +228,7 @@ def set_delay_timer(register):
 
 #FX18 - Sets sound timer to value of register x
 def set_sound_timer(register):
-	sound_timer = registers[register]'
+	sound_timer = registers[register]
 
 #FX1E - Adds register and value of I and sets result as I
 def add_to_stack(register):
@@ -252,14 +253,17 @@ def store_reg_in_mem(end):
 #Or do I need to make a list and then alter it and clear it within this function
 def read_from_memory(end):
 	location = I
+	data = []
 	for register in range(hex(end + 1)):
+		data.append(registers[register])
 
 
 
 
 
 
-#------------------------ End of Opcodes -------------------------
+
+#------------------------ Opcode Logic -------------------------
 
 #Step parses out opcodes and calls the appropriate function.
 def step():
@@ -269,7 +273,7 @@ def step():
 	print "PC = ", PC
 
 	#QUESTION -- doing this so then i don't have the issue of trying to parse a
-	#opcode outside of memory.
+	#opcode outside range of memory.
 	if PC == 0x1000:
 		finished = True
 		return
@@ -292,108 +296,114 @@ def step():
 	#Directing to correct opcodes
 
 	#Multiple 0 opcodes
-	if op_code[0] == "0":
-		if op_code == "00E0":
-			clear_display()
-		if op_code == "00EE":
-			return_address()
+	# if op_code[0] == "0":
+	# 	if op_code == "00E0":
+	# 		clear_display()
+	# 	if op_code == "00EE":
+	# 		return_address()
+	#
+	# if op_code[0] == "1":
+	# 	address_jump(nnn)
+	#
+	# elif op_code[0] == "2":
+	# 	subroutine(nnn)
+	#
+	# elif op_code[0] == "3":
+	# 	skip_if_equal(x, nn)
 
-	if op_code[0] == "1":
-		address_jump(nnn)
-
-	elif op_code[0] == "2":
-		subroutine(nnn)
-
-	elif op_code[0] == "3":
-		skip_if_equal(x, nn)
-
-	elif op_code[0] == "4":
-		skip_if_unequal(x, nn)
-
-	elif op_code[0] == "5":
-		register_equal_skip(x, y)
-
-	elif op_code[0] == "6":
-		set_register(x, nn)
-
-	elif op_code[0] == "7":
-		register_add_value(x, nn)
+	# elif op_code[0] == "4":
+	# 	skip_if_unequal(x, nn)
+	#
+	# elif op_code[0] == "5":
+	# 	register_equal_skip(x, y)
+	#
+	# elif op_code[0] == "6":
+	# 	set_register(x, nn)
+	#
+	# elif op_code[0] == "7":
+	# 	register_add_value(x, nn)
 
 	#Multiple 8 opcodes
-	elif op_code[0] == "8":
-		if op_code[3] == "0":
-			register_a_b_set(x, y)
-
-		if op_code[3] == "1":
-			or_register(x, y)
-
-		if op_code[3] == "2":
-			and_register(x, y)
-
-		if op_code[3] == "3":
-			xor_register(x, y)
-
-		if op_code[3] == "4":
-			add_two_registers(x, y)
-
-		if op_code[3] == "5":
-			registers_subtract(x, y)
-
-
-		if op_code[3] == "6":
-			shift_right(x)
-
-		if op_code[3] == "7":
-			registers_neg_subtract(x, y)
-
-		if op_code[3] == "E":
-
-	elif op_code[0] == "9":
-		register_unequal_skip(x, y)
-
-	elif op_code[0] == "A":
-		set_I(nnn)
-
-	elif op_code[0] == "B":
-		jump_first_reg(nnn)
-
-	elif op_code[0] == "C":
-		jump_random(x, nn)
-
-	elif op_code[0] == "D":
-
-	elif op_code[0] == "E":
-		if op_code[3] == "E":
-
-		else:
-
+	# elif op_code[0] == "8":
+	# 	if op_code[3] == "0":
+	# 		register_a_b_set(x, y)
+	#
+	# 	if op_code[3] == "1":
+	# 		or_register(x, y)
+	#
+	# 	if op_code[3] == "2":
+	# 		and_register(x, y)
+	#
+	# 	if op_code[3] == "3":
+	# 		xor_register(x, y)
+	#
+	# 	if op_code[3] == "4":
+	# 		add_two_registers(x, y)
+	#
+	# 	if op_code[3] == "5":
+	# 		registers_subtract(x, y)
+	#
+	#
+	# 	if op_code[3] == "6":
+	# 		shift_right(x)
+	#
+	# 	if op_code[3] == "7":
+	# 		registers_neg_subtract(x, y)
+	#
+	# 	if op_code[3] == "E":
+	# 		return
+	#
+	# elif op_code[0] == "9":
+	# 	register_unequal_skip(x, y)
+	#
+	# elif op_code[0] == "A":
+	# 	set_I(nnn)
+	#
+	# elif op_code[0] == "B":
+	# 	jump_first_reg(nnn)
+	#
+	# elif op_code[0] == "C":
+	# 	jump_random(x, nn)
+	#
+	# elif op_code[0] == "D":
+	# 	return
+	#
+	# elif op_code[0] == "E":
+	# 	if op_code[3] == "E":
+	# 		return
+	#
+	# 	else:
+	# 		return
+	#
 
 	#Multiple F opcodes
-	elif op_code[0] == "F":
-		if op_code[3] == "7":
-			set_reg_to_delay(x)
-
-		elif op_code[3] == "A":
-			input_to_register(x)
-
-		elif op_code[2:3] == "15":
-			set_delay_timer(x)
-
-		elif op_code[3] == "8":
-			set_sound_timer(x)
-
-		elif op_code[3] == "E":
-			add_to_stack(x)
-
-		elif op_code[3] == "9":
-
-		elif op_code[3] == "3":
-
-		elif op_code[2:3] == "55":
-			store_reg_in_mem(x)
-
-		elif op_code[2:3] == "65":
-			read_from_memory(x)
+	# elif op_code[0] == "F":
+	# 	if op_code[3] == "7":
+	# 		set_reg_to_delay(x)
+	#
+	# 	elif op_code[3] == "A":
+	# 		input_to_register(x)
+	#
+	# 	elif op_code[2:3] == "15":
+	# 		set_delay_timer(x)
+	#
+	# 	elif op_code[3] == "8":
+	# 		set_sound_timer(x)
+	#
+	# 	elif op_code[3] == "E":
+	# 		add_to_stack(x)
+	#
+	# 	elif op_code[3] == "9":
+	# 		return
+	#
+	# 	elif op_code[3] == "3":
+	# 		return
+	#
+	# 	elif op_code[2:3] == "55":
+	# 		store_reg_in_mem(x)
+	#
+	# 	elif op_code[2:3] == "65":
+	# 		read_from_memory(x)
 
 	print op_code
 
