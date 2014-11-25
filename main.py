@@ -93,7 +93,13 @@ def clear_display():
 
 #00EE - Returns from subroutine (aka a jump in execution.)
 def return_address():
+	global PC
+	global stack
+	stack.append(4)
+	print "PC type: ", type(PC)
+	print "PC before: ", PC
 	PC = stack.pop(-1)
+	print "PC after: ", PC
 
 
 #1NNN - Jumps to a certain address
@@ -260,9 +266,6 @@ def read_from_memory(end):
 
 
 
-
-
-
 #------------------------ Opcode Logic -------------------------
 
 #Step parses out opcodes and calls the appropriate function.
@@ -290,17 +293,20 @@ def step():
 	x = int(op_code[1], 16)
 	y = int(op_code[2], 16)
 
+	print op_code
+
 	#Increment Program Counter (PC)
 	PC += 2
+
 
 	#Directing to correct opcodes
 
 	#Multiple 0 opcodes
-	# if op_code[0] == "0":
-	# 	if op_code == "00E0":
-	# 		clear_display()
-	# 	if op_code == "00EE":
-	# 		return_address()
+	if op_code[0] == "0":
+		if op_code == "00E0":
+			clear_display()
+		if op_code == "00EE":
+			return_address()
 	#
 	# if op_code[0] == "1":
 	# 	address_jump(nnn)
@@ -405,7 +411,7 @@ def step():
 	# 	elif op_code[2:3] == "65":
 	# 		read_from_memory(x)
 
-	print op_code
+
 
 
 #Display loop (infinite) - use pygame
