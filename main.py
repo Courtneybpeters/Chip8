@@ -95,16 +95,22 @@ def clear_display():
 def return_address():
 	global PC
 	global stack
-	stack.append(4)
-	print "PC type: ", type(PC)
+	print "Return address - 00ee"
+	stack.append(0x210)
 	print "PC before: ", PC
 	PC = stack.pop(-1)
 	print "PC after: ", PC
+	PC = 0x200 + 2
 
 
 #1NNN - Jumps to a certain address
 def address_jump(address):
+	global PC
+	print "Address jump - 1nnn"
+	print "PC before: ", PC
 	PC = address
+	print "PC after: ", PC
+	PC = 0x200
 
 
 #2NNN - Calls subroutine at that address
@@ -273,7 +279,8 @@ def step():
 	global PC
 	global finished
 
-	print "PC = ", PC
+	# Debugging
+	# print "PC = ", PC
 
 	#QUESTION -- doing this so then i don't have the issue of trying to parse a
 	#opcode outside range of memory.
@@ -308,9 +315,9 @@ def step():
 		if op_code == "00EE":
 			return_address()
 	#
-	# if op_code[0] == "1":
-	# 	address_jump(nnn)
-	#
+	if op_code[0] == "1":
+		address_jump(nnn)
+
 	# elif op_code[0] == "2":
 	# 	subroutine(nnn)
 	#
