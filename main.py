@@ -41,7 +41,7 @@ stack = []
 
 #Display - 64 X 32
 #List comprehension of a list comprehension -- a 64 item array of 32 item arrays.
-display = [[True for x in range(32)] for x in range(64)]
+display = [[True for x in range(64)] for x in range(32)]
 
 
 #Input - Hexidecimal keyboard created using list comprehension

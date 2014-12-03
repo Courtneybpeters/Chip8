@@ -3,7 +3,7 @@ from pygame.locals import *
 
 pygame.init()
 
-screen = pygame.display.set_mode((640, 320))
+screen = pygame.display.set_mode((703, 351))
 
 fps = pygame.time.Clock()
 
@@ -13,21 +13,27 @@ light = pygame.Color(229, 204, 255)
 x_axis = 0
 y_axis = 0
 
-size = 30
+size = 10
 
 #True -- Dark
 #False -- Light
-display = [True, False, True, True, False, True]
+display = [[[True for x in range(64)], [False for x in range(64)]] for x in range(32)]
 
 while True:
-    for pixel in display:
-        if pixel == True:
-            screen.fill(dark, (x_axis, y_axis, size, size))
-            x_axis += 30
+    for row in display:
+        for col in row:
+            for pixel in col:
+                if x_axis >= 703:
+                    x_axis = 0
+                    y_axis += size + 1
 
-        else:
-            screen.fill(light, (x_axis, y_axis, size, size))
-            x_axis += 30
+                if pixel == True:
+                    screen.fill(dark, (x_axis, y_axis, size, size))
+                    x_axis += size + 1
+
+                else:
+                    screen.fill(light, (x_axis, y_axis, size, size))
+                    x_axis += size + 1
 
 
     for event in pygame.event.get():
