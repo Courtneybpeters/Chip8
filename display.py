@@ -7,7 +7,7 @@ screen = pygame.display.set_mode((703, 351))
 
 fps = pygame.time.Clock()
 
-dark = pygame.Color(255, 0, 255)
+dark = pygame.Color(93, 1, 130)
 light = pygame.Color(229, 204, 255)
 
 x_axis = 0
