@@ -41,7 +41,7 @@ while True:
             if event.key == K_EQUALS:
                 size += 2
             if event.key == K_MINUS:
-                size -= 2
+                size = max(2, size - 2)
 
     pygame.display.update()
 
