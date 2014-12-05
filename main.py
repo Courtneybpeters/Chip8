@@ -90,33 +90,21 @@ def clear_display():
 		for item in array:
 			item = True
 
-
-
-
 #00EE - Returns from subroutine (aka a jump in execution.)
 def return_address():
 	global PC
 	global stack
-	print "Return address - 00ee"
-	stack.append(0x210)
-	print "PC before: ", PC
 	PC = stack.pop(-1)
-	print "PC after: ", PC
-	PC = 0x200 + 2
-
 
 #1NNN - Jumps to a certain address
 def address_jump(address):
 	global PC
-	print "Address jump - 1nnn"
-	print "PC before: ", PC
 	PC = address
-	print "PC after: ", PC
-	PC = 0x200
-
 
 #2NNN - Calls subroutine at that address
 def subroutine(address):
+	global PC
+	global stack
 	stack.append(PC)
 	PC = address
 
@@ -139,9 +127,8 @@ def register_equal_skip(a, b):
 		PC += 2
 
 #6XNN - Sets register to a value
-
 def set_register(register, value):
-	registers[register] = hex(value)
+	registers[register] = value
 
 #7XNN - Adds to a register
 def register_add_value(register, value):
