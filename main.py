@@ -110,6 +110,7 @@ def subroutine(address):
 
 #3XNN - Skip if equal to NN
 def skip_if_equal(register, value):
+	global PC
 	if registers[register] == value:
 
 		#Add 2 because each opcode is two bytes (2 hex values) and we already
@@ -118,12 +119,14 @@ def skip_if_equal(register, value):
 
 #4XNN - Skip if not equal to NN
 def skip_if_unequal(register, value):
+	global PC
 	if registers[register] != value:
 		PC += 2
 
 #5XY0 - Skips instruction if two registers are equal
 def register_equal_skip(a, b):
-	if register[a] == registers[b]:
+	global PC
+	if registers[a] == registers[b]:
 		PC += 2
 
 #6XNN - Sets register to a value
@@ -132,7 +135,7 @@ def set_register(register, value):
 
 #7XNN - Adds to a register
 def register_add_value(register, value):
-	registers[register] += hex(value)
+	registers[register] += value
 
 #8XY0 - Sets register to the value of the other register
 def register_a_b_set(a, b):

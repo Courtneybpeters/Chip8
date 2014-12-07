@@ -36,7 +36,7 @@ class Test_Chip_8(unittest.TestCase):
         print "return from subroutine passed."
 
 
-    def test_registers(self):
+    def test_register_value(self):
         print
         print "Testing register assignment function"
         self.assertEqual(main.registers[5], 0)
@@ -44,11 +44,71 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.registers[5], 0x40)
         print "register assignment passed."
         print
-        print "Testing skip if equal function"
-        main.registers[5] = 0x40
+
+        print "Testing skip if equal function - equal"
         main.skip_if_equal(5, 0x40)
-        self.assertEqual(main.PC, 0x300)
-        print "Skip if equal passed."
+        self.assertEqual(main.PC, 0x302)
+        print "Skip if equal - equal passed."
+        print
+        print "Testing skip if equal function - unequal"
+        main.skip_if_equal(5, 0x50)
+        self.assertEqual(main.PC, 0x302)
+        print "Skip if equal - unequal passed."
+        print
+        print "Testing skip if unequal function - unequal"
+        main.skip_if_unequal(5, 0x50)
+        self.assertEqual(main.PC, 0x304)
+        print "Skip if unequal - unequal passed."
+        print
+        print "Testing skip if unequal function - equal"
+        main.skip_if_unequal(5, 0x40)
+        self.assertEqual(main.PC, 0x304)
+        print "Skip if unequal - equal passed."
+
+    def test_register_compare(self):
+        print
+        print "Testing two register comparison function"
+
+        #This section is repeat to ensure register is cleared and then set.
+        #Register A
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x40)
+        self.assertEqual(main.registers[5], 0x40)
+
+        #Register B - equal to A
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x40)
+        self.assertEqual(main.registers[10], 0x40)
+
+        #Register B - Unequal
+        self.assertEqual(main.registers[9], 0)
+        main.set_register(9, 0x50)
+        self.assertEqual(main.registers[9], 0x50)
+
+        main.register_equal_skip(5, 10)
+        self.assertEqual(main.PC, 0x302)
+        print "Two register comparison - equal passed."
+
+        main.register_equal_skip(5, 9)
+        self.assertEqual(main.PC, 0x302)
+        print "Two register comparison - unequal passed."
+
+    def test_register_add(self):
+        print
+        print "Testing addition to register function"
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x40)
+        self.assertEqual(main.registers[5], 0x40)
+
+        main.register_add_value(5, 0x10)
+        self.assertEqual(main.registers[5], 0x50)
+        print "Addition to register passed."
+
+    def test_register_ab(self):
+        print
+
+
+
 
 
 if __name__ == '__main__':
