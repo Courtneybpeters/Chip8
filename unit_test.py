@@ -5,6 +5,9 @@ import main
 #                  so I don't have to keep checking they're zero, setting them,
 #                  and then performing a function on them?
 
+#       QUESTION - Why am I having to make PC global in all my functions but not
+#                  the registers array?
+
 class Test_Chip_8(unittest.TestCase):
     def setUp(self):
         main.PC = 0x300 # not 0x200, to check execution that's partially into and not validate only fresh executions
@@ -153,6 +156,114 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.registers[5], 0x00)
         self.assertEqual(main.registers[10], 0x42)
         print "AND on registers passed."
+
+    def test_register_XOR(self):
+        print
+        print "Testing OR on two registers function."
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x3C)
+        self.assertEqual(main.registers[5], 0x3C)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x42)
+        self.assertEqual(main.registers[10], 0x42)
+
+        main.xor_register(5, 10)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.registers[10], 0x42)
+        print "XOR on registers passed."
+
+    def test_register_add(self):
+        print
+        print "Testing adding register to another function."
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x7e)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x42)
+        self.assertEqual(main.registers[10], 0x42)
+        self.assertEqual(main.registers[15], 0x00)
+
+        main.add_two_registers(5, 10)
+        self.assertEqual(main.registers[5], 0xC0)
+        print "Adding registers - no carry passed"
+
+        #TODO - If I carry, I can't store anything over 255 in a register, right?
+        #       255 in one byte?
+        main.add_two_registers(5, 10)
+        self.assertEqual(main.registers[5], 0x102)
+        self.assertEqual(main.registers[15], 0x01)
+        print "Adding registers - carry passed"
+
+    def test_register_minus(self):
+        print
+        print "Testing subtracting one register from another function."
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x7e)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x42)
+        self.assertEqual(main.registers[10], 0x42)
+        self.assertEqual(main.registers[15], 0x00)
+
+        main.registers_subtract(5, 10)
+        self.assertEqual(main.registers[5], 0x3C)
+        self.assertEqual(main.registers[15], 0x01)
+        print "Subtraction - no borrow passed."
+
+        #TODO - I can't put a negative value into a register can I???
+        main.registers_subtract(5, 10)
+        self.assertEqual(main.registers[5], 0x6)
+        self.assertEqual(main.registers[15], 0x00)
+        print "Subtraction - borrow passed."
+
+    def test_unequalreg_skip(self):
+        print
+        print "Testing if unequal registers skip function."
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x7e)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x42)
+        self.assertEqual(main.registers[10], 0x42)
+
+        main.register_unequal_skip(5, 10)
+        self.assertEqual(main.PC, 0x302)
+        print "Skip if unequal registers - unequal passed."
+
+        main.set_register(10, 0x7e)
+        self.assertEqual(main.registers[10], 0x7e)
+
+        main.register_unequal_skip(5, 10)
+        self.assertEqual(main.PC, 0x302)
+        print "Skip if unequal registers - equal passed."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

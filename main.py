@@ -151,7 +151,7 @@ def and_register(a, b):
 
 #8XY3 - Bitwise XOR two registers
 def xor_register(a, b):
-	registers[a] = hex(registers[a] ^ registers[b])
+	registers[a] = registers[a] ^ registers[b]
 
 #8XY4 - Add register b to a, register f == 1 if there is a carry, else 0
 def add_two_registers(a, b):
@@ -161,17 +161,18 @@ def add_two_registers(a, b):
 	else:
 		registers[0xF] = 0x00
 
-	registers[a] = hex(registers[a] + registers[b])
+	registers[a] = registers[a] + registers[b]
 
 #8XY5 - Subtracts x from y, register f = 1
 def registers_subtract(a, b):
+    #F indicates NOT borrowed, so if we didn't borrow, set it to true(1)
 	if registers[a] > registers[b]:
 		registers[0xF] = 0x01
 
 	else:
 		registers[0xF] = 0x00
 
-	registers[a] = hex(registers[a] - registers[b])
+	registers[a] = registers[a] - registers[b]
 
 #8XY6 - Shift register to the right by one
 #TODO: shift_right function
@@ -195,6 +196,7 @@ def shift_left(register):
 
 #9XY0 - Skip instruction if a doesn't equal b
 def register_unequal_skip(a, b):
+	global PC
 	if registers[a] != registers[b]:
 		PC += 2
 
