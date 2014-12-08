@@ -1,6 +1,10 @@
 import unittest
 import main
 
+#TODO - QUESTION - Can I just assign two of the registers a value in the setup
+#                  so I don't have to keep checking they're zero, setting them,
+#                  and then performing a function on them?
+
 class Test_Chip_8(unittest.TestCase):
     def setUp(self):
         main.PC = 0x300 # not 0x200, to check execution that's partially into and not validate only fresh executions
@@ -106,6 +110,56 @@ class Test_Chip_8(unittest.TestCase):
 
     def test_register_ab(self):
         print
+        print "Testing setting register to value of register b function"
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x40)
+        self.assertEqual(main.registers[5], 0x40)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x20)
+        self.assertEqual(main.registers[10], 0x20)
+
+        main.register_a_b_set(5, 10)
+        self.assertEqual(main.registers[5], 0x20)
+        print "Register a assignment passed."
+        self.assertEqual(main.registers[10], 0x20)
+        print "Register b passed."
+
+    def test_register_OR(self):
+        print
+        print "Testing OR on two registers function"
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x3C)
+        self.assertEqual(main.registers[5], 0x3C)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x42)
+        self.assertEqual(main.registers[10], 0x42)
+
+        main.or_register(5, 10)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.registers[10], 0x42)
+        print "OR on registers passed."
+
+    def test_register_AND(self):
+        print
+        print "Testing OR on two registers function"
+        self.assertEqual(main.registers[5], 0)
+        main.set_register(5, 0x3C)
+        self.assertEqual(main.registers[5], 0x3C)
+        self.assertEqual(main.registers[10], 0)
+        main.set_register(10, 0x42)
+        self.assertEqual(main.registers[10], 0x42)
+
+        main.and_register(5, 10)
+        self.assertEqual(main.registers[5], 0x00)
+        self.assertEqual(main.registers[10], 0x42)
+        print "AND on registers passed."
+
+
+
+
+
+
+
 
 
 

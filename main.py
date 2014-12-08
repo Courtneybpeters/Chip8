@@ -143,11 +143,11 @@ def register_a_b_set(a, b):
 
 #8XY1 - Bitwise OR two registers
 def or_register(a, b):
-	registers[a] = hex(registers[a] | registers[b])
+	registers[a] = registers[a] | registers[b]
 
 #8XY2 - Bitwise AND two registers
 def and_register(a, b):
-	registers[a] = hex(registers[a] & registers[b])
+	registers[a] = registers[a] & registers[b]
 
 #8XY3 - Bitwise XOR two registers
 def xor_register(a, b):
