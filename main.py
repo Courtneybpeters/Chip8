@@ -202,16 +202,18 @@ def register_unequal_skip(a, b):
 
 #ANNN - Sets I to a certain address
 def set_I(address):
+	global I
 	I = address
 
 #BNNN - Jumps to address of nnn + the first register
 def jump_first_reg(value):
+	global PC
 	PC = value + registers[0x0]
 
 #CXNN - Set register to a value + random number
 def jump_random(register, value):
-	random = hex(random.randrange(255))
-	registers[register] = hex(value & random)
+	rand_number = random.randrange(255)
+	registers[register] = value + rand_number
 
 #TODO DXYN
 
@@ -226,19 +228,22 @@ def set_reg_to_delay(register):
 #FX0A - Stores key pressed in a register (raw_input pretty much)
 #TODO - Keys via keyboard or on screen keys?
 def input_to_register(register):
-	registers[register] = hex(raw_input())
+	registers[register] = int(raw_input())
 
 #FX15 - Sets delay timer to the value of register x
 def set_delay_timer(register):
+	global delay_timer
 	delay_timer = registers[register]
 
 #FX18 - Sets sound timer to value of register x
 def set_sound_timer(register):
+	global sound_timer
 	sound_timer = registers[register]
 
 #FX1E - Adds register and value of I and sets result as I
 def add_to_stack(register):
-	I = hex(I + registers[register])
+	global I
+	I = I + registers[register]
 
 #FX29 - location of sprite
 #TODO

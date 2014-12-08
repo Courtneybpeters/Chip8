@@ -5,7 +5,7 @@ import main
 #                  so I don't have to keep checking they're zero, setting them,
 #                  and then performing a function on them?
 
-#       QUESTION - Why am I having to make PC global in all my functions but not
+#       QUESTION - Why am I having to make PC and I global in all my functions but not
 #                  the registers array?
 
 class Test_Chip_8(unittest.TestCase):
@@ -13,8 +13,10 @@ class Test_Chip_8(unittest.TestCase):
         main.PC = 0x300 # not 0x200, to check execution that's partially into and not validate only fresh executions
         main.stack = []
         main.registers = [0x00 for x in range(0x10)]
-        main.I = 0
+        main.I = 0x0000
         main.clear_memory()
+        main.delay_timer = 0
+        main.sound_timer = 0
 
     def test_jump(self):
         print
@@ -235,7 +237,86 @@ class Test_Chip_8(unittest.TestCase):
 
         main.register_unequal_skip(5, 10)
         self.assertEqual(main.PC, 0x302)
-        print "Skip if unequal registers - equal passed."
+        print "Skip if unequal registers - equal passed"
+
+    def test_set_I(self):
+        print
+        print "Testing setting I function."
+        self.assertEqual(main.I, 0x00)
+        #TODO - Is this an address in the register or memory?
+        main.set_I(0x0F)
+        self.assertEqual(main.I, 0x0F)
+        print "Setting I passed"
+
+    def test_jump_first_reg(self):
+        print
+        print "Testing add first register to PC function."
+        self.assertEqual(main.registers[0], 0)
+        main.set_register(0, 0x7e)
+        self.assertEqual(main.registers[0], 0x7e)
+
+        main.jump_first_reg(4)
+        self.assertEqual(main.PC, 0x82)
+        print "Jump to value + register passed"
+
+    def test_jump_random(self):
+        print
+        print "Testing random jump function."
+        self.assertEqual(main.registers[5], 0)
+        main.jump_random(5, 0x64)
+        #TODO - If it's a random number, can I only test that it was at least changed?
+        self.assertNotEqual(main.registers[5], 0x64)
+        print "Random jump passed"
+
+    def test_setto_delaytimer(self):
+        print
+        print "Testing set register to delay timer value function."
+        main.set_register(5, 0x7e)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.delay_timer, 0x00)
+        main.set_reg_to_delay(5)
+        self.assertEqual(main.registers[5], 0x00)
+        print "Register set to delay timer passed"
+
+    #TODO - Input_to_register_test
+
+    def test_set_delay_timer(self):
+        print
+        print "Testing setting delay timer function."
+        main.set_register(5, 0x7e)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.delay_timer, 0x00)
+        main.set_delay_timer(5)
+        self.assertEqual(main.delay_timer, 0x7e)
+        print "Delay timer set passed"
+
+    def test_set_sound_timer(self):
+        print
+        print "Testing setting sound timer function."
+        main.set_register(5, 0x7e)
+        self.assertEqual(main.registers[5], 0x7e)
+        self.assertEqual(main.sound_timer, 0x00)
+        main.set_sound_timer(5)
+        self.assertEqual(main.sound_timer, 0x7e)
+        print "Sound timer set passed"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
