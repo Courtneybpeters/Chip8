@@ -6,8 +6,8 @@ import random
 
 finished = False
 memory = []
-registers[]
-I = 0x00
+registers = []
+I = 0x0000
 PC = 0x00
 delay_timer = 0
 sound_timer = 0
@@ -24,37 +24,40 @@ def reset():
 
 	#Must include sections so you don't have to code an offset
 	#Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
+	global memory
 	memory = [0x00 for x in range(0x1000)]
-
-	#Clears memory
-	def clear_memory():
-		for byte in memory:
-			byte = 0x00
 
 	#Registers
 	#QUESTION - can this hex value be written as 0x0 because it will never go above 15 aka F?
 	#or is it because its 8-bits (aka two hex values?)
+	global registers
 	registers = [0x00 for x in range(0x10)]
 
 	#Register I - used for drawing
+	global I
 	I = 0x0000
 
 	#Program counter so execution can jump to different points in memory.
 	#Starts at where programs start within the memory.
+	global PC
 	PC = 0x200
 
 	#Timers - count down until 0
+	global delay_timer
 	delay_timer = 0
 
 	#Sound is played only when this is at 0
+	global sound_timer
 	sound_timer = 0
 
 	#Stack - pretty much a bookmark for addresses with jumps of execution. Think LIFO
+	global stack
 	stack = []
 
 
 	#Display - 64 X 32
 	#List comprehension of a list comprehension -- a 64 item array of 32 item arrays.
+	global display
 	display = [[True for x in range(64)] for x in range(32)]
 
 
@@ -64,6 +67,7 @@ def reset():
 	keys = [False for x in range(0x10)]
 
 	#Opcode variable needs to be global
+	global op_code
 	op_code = ''
 
 

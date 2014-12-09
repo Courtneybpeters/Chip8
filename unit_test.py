@@ -10,14 +10,15 @@ import main
 
 class Test_Chip_8(unittest.TestCase):
     def setUp(self):
-        main.PC = 0x300 # not 0x200, to check execution that's partially into and not validate only fresh executions
-        main.stack = []
-        main.registers = [0x00 for x in range(0x10)]
-        main.I = 0x0000
-        main.clear_memory()
-        main.delay_timer = 0
-        main.sound_timer = 0
-        main.memory = [0x00 for x in range(0x1000)]
+        main.reset()
+        # main.PC = 0x300 # not 0x200, to check execution that's partially into and not validate only fresh executions
+        # main.stack = []
+        # main.registers = [0x00 for x in range(0x10)]
+        # main.I = 0x0000
+        #
+        # main.delay_timer = 0
+        # main.sound_timer = 0
+        # main.memory = [0x00 for x in range(0x1000)]
 
     def test_jump(self):
         print
@@ -35,14 +36,14 @@ class Test_Chip_8(unittest.TestCase):
         print
         print "Testing jump to subroutine function"
         main.subroutine(0x400)
-        self.assertEqual(main.stack[0], 0x300)
+        self.assertEqual(main.stack[0], 0x200)
         self.assertEqual(main.PC, 0x400)
         print "jump to subroutine passed."
         print
         print "Testing return from subroutine function"
         main.return_address()
         self.assertEqual(len(main.stack), 0)
-        self.assertEqual(main.PC, 0x300)
+        self.assertEqual(main.PC, 0x200)
         print "return from subroutine passed."
 
 
@@ -57,22 +58,22 @@ class Test_Chip_8(unittest.TestCase):
 
         print "Testing skip if equal function - equal"
         main.skip_if_equal(5, 0x40)
-        self.assertEqual(main.PC, 0x302)
+        self.assertEqual(main.PC, 0x202)
         print "Skip if equal - equal passed."
         print
         print "Testing skip if equal function - unequal"
         main.skip_if_equal(5, 0x50)
-        self.assertEqual(main.PC, 0x302)
+        self.assertEqual(main.PC, 0x202)
         print "Skip if equal - unequal passed."
         print
         print "Testing skip if unequal function - unequal"
         main.skip_if_unequal(5, 0x50)
-        self.assertEqual(main.PC, 0x304)
+        self.assertEqual(main.PC, 0x204)
         print "Skip if unequal - unequal passed."
         print
         print "Testing skip if unequal function - equal"
         main.skip_if_unequal(5, 0x40)
-        self.assertEqual(main.PC, 0x304)
+        self.assertEqual(main.PC, 0x204)
         print "Skip if unequal - equal passed."
 
     def test_register_compare(self):
@@ -96,11 +97,11 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.registers[9], 0x50)
 
         main.register_equal_skip(5, 10)
-        self.assertEqual(main.PC, 0x302)
+        self.assertEqual(main.PC, 0x202)
         print "Two register comparison - equal passed."
 
         main.register_equal_skip(5, 9)
-        self.assertEqual(main.PC, 0x302)
+        self.assertEqual(main.PC, 0x202)
         print "Two register comparison - unequal passed."
 
     def test_register_add(self):
@@ -244,14 +245,14 @@ class Test_Chip_8(unittest.TestCase):
         main.set_register(10, 0x42)
 
         main.register_unequal_skip(5, 10)
-        self.assertEqual(main.PC, 0x302)
+        self.assertEqual(main.PC, 0x202)
         print "Skip if unequal registers - unequal passed."
 
         main.set_register(10, 0x7e)
         self.assertEqual(main.registers[10], 0x7e)
 
         main.register_unequal_skip(5, 10)
-        self.assertEqual(main.PC, 0x302)
+        self.assertEqual(main.PC, 0x202)
         print "Skip if unequal registers - equal passed"
 
     def test_set_I(self):
@@ -351,13 +352,13 @@ class Test_Chip_8(unittest.TestCase):
         print "Testing memory read into registers function."
         main.set_I(0x802)
         main.memory[0x802] = 0x01
-        main.memory[0x804] = 0x02
-        main.memory[0x806] = 0x03
+        main.memory[0x803] = 0x02
+        main.memory[0x804] = 0x03
 
         main.read_from_memory(0x806)
         self.assertEqual(main.registers[0], 0x01)
         self.assertEqual(main.registers[1], 0x02)
-        self.assertEqual(main.registers[2], 0x02)
+        self.assertEqual(main.registers[2], 0x03)
         print "Memory read function has passed"
 
 
