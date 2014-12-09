@@ -17,6 +17,7 @@ class Test_Chip_8(unittest.TestCase):
         main.clear_memory()
         main.delay_timer = 0
         main.sound_timer = 0
+        main.memory = [0x00 for x in range(0x1000)]
 
     def test_jump(self):
         print
@@ -190,22 +191,17 @@ class Test_Chip_8(unittest.TestCase):
         print "Adding registers - no carry passed"
 
         #TODO - If I carry, I can't store anything over 255 in a register, right?
-        #       255 in one byte?
+        #       255 in one byte? Yes, I only store the remainder in the register
         main.add_two_registers(5, 10)
-        self.assertEqual(main.registers[5], 0x102)
+        self.assertEqual(main.registers[5], 0x02)
         self.assertEqual(main.registers[15], 0x01)
         print "Adding registers - carry passed"
 
     def test_register_minus(self):
         print
         print "Testing subtracting one register from another function."
-        self.assertEqual(main.registers[5], 0)
         main.set_register(5, 0x7e)
-        self.assertEqual(main.registers[5], 0x7e)
-        self.assertEqual(main.registers[10], 0)
         main.set_register(10, 0x42)
-        self.assertEqual(main.registers[10], 0x42)
-        self.assertEqual(main.registers[15], 0x00)
 
         main.registers_subtract(5, 10)
         self.assertEqual(main.registers[5], 0x3C)
@@ -218,15 +214,34 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.registers[15], 0x00)
         print "Subtraction - borrow passed."
 
+    def test_shift_right(self):
+        print
+        print "Testing shift right function."
+        main.set_register(5, 0x7e)
+
+        main.shift_right(5)
+        self.assertEqual(main.registers[5], 0x3F)
+        print "The shift right function passed"
+
+    def test_shift_left(self):
+        print
+        print "Testing shift left function."
+        main.set_register(5, 0x8e)
+        main.shift_left(5)
+        self.assertEqual(main.registers[5], 0x1C)
+        print "Shift left - greater than 128 passed"
+
+        main.set_register(5, 0x7e)
+        main.shift_left(5)
+        self.assertEqual(main.registers[5], 0xFC)
+        print "Shift left - less than 128 passed"
+
+
     def test_unequalreg_skip(self):
         print
         print "Testing if unequal registers skip function."
-        self.assertEqual(main.registers[5], 0)
         main.set_register(5, 0x7e)
-        self.assertEqual(main.registers[5], 0x7e)
-        self.assertEqual(main.registers[10], 0)
         main.set_register(10, 0x42)
-        self.assertEqual(main.registers[10], 0x42)
 
         main.register_unequal_skip(5, 10)
         self.assertEqual(main.PC, 0x302)
@@ -243,7 +258,7 @@ class Test_Chip_8(unittest.TestCase):
         print
         print "Testing setting I function."
         self.assertEqual(main.I, 0x00)
-        #TODO - Is this an address in the register or memory?
+        #TODO - Is this an address in the memory? yes
         main.set_I(0x0F)
         self.assertEqual(main.I, 0x0F)
         print "Setting I passed"
@@ -264,7 +279,7 @@ class Test_Chip_8(unittest.TestCase):
         print "Testing random jump function."
         self.assertEqual(main.registers[5], 0)
         main.jump_random(5, 0x64)
-        #TODO - If it's a random number, can I only test that it was at least changed?
+        #TODO - Check not above I + 255 and then perhaps loop to test a few
         self.assertNotEqual(main.registers[5], 0x64)
         print "Random jump passed"
 
@@ -300,46 +315,34 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.sound_timer, 0x7e)
         print "Sound timer set passed"
 
+    def test_stack_add(self):
+        print
+        print "Testing the addition to I"
+        main.set_I(0x7e)
+        self.assertEqual(main.I, 0x7E)
+        main.set_register(5, 0x0F)
+        self.assertEqual(main.registers[5], 0x0F)
 
+        main.add_to_stack(5)
+        self.assertEqual(main.I, 0x8D)
+        print "Addition to I has passed"
 
+    def test_memory_store(self):
+        main.set_I(0x802)
 
+        main.set_register(0, 0x0A)
+        main.set_register(1, 0x0B)
+        main.set_register(2, 0x0C)
+        main.set_register(3, 0x0D)
+        main.set_register(4, 0x0E)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        main.store_reg_in_mem(4)
+        count = 0
+        for i in range(main.I, 5):
+            self.assertEqual(memory[i], registers[count])
+            count + 1
+        self.assertEqual(main.I, 0x802)
+        print "Memory store has passed"
 
 
 

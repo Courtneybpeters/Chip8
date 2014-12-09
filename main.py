@@ -143,25 +143,26 @@ def register_a_b_set(a, b):
 
 #8XY1 - Bitwise OR two registers
 def or_register(a, b):
-	registers[a] = registers[a] | registers[b]
+	registers[a] |= registers[b]
 
 #8XY2 - Bitwise AND two registers
 def and_register(a, b):
-	registers[a] = registers[a] & registers[b]
+	registers[a] &= registers[b]
 
 #8XY3 - Bitwise XOR two registers
 def xor_register(a, b):
-	registers[a] = registers[a] ^ registers[b]
+	registers[a] ^= registers[b]
 
 #8XY4 - Add register b to a, register f == 1 if there is a carry, else 0
 def add_two_registers(a, b):
 	if registers[a] + registers[b] > 255:
 		registers[0xF] = 0x01
+		registers[a] += registers[b] - 256
 
 	else:
 		registers[0xF] = 0x00
+		registers[a] += registers[b]
 
-	registers[a] = registers[a] + registers[b]
 
 #8XY5 - Subtracts x from y, register f = 1
 def registers_subtract(a, b):
@@ -172,13 +173,18 @@ def registers_subtract(a, b):
 	else:
 		registers[0xF] = 0x00
 
-	registers[a] = registers[a] - registers[b]
+	registers[a] = abs(registers[a] - registers[b])
+
 
 #8XY6 - Shift register to the right by one
-#TODO: shift_right function
 def shift_right(register):
-	return
+	registers[0xF] = registers[register] % 2
 
+	registers[register] >>= 1
+
+
+#TODO - Use only the first subtraction function, switch a, b in the parameters
+# 		when you call it.
 #8XY7 - Subtracts a from b, negative subtraction
 def registers_neg_subtract(a, b):
 	if registers[b] > registers[a]:
@@ -190,9 +196,18 @@ def registers_neg_subtract(a, b):
 	register[a] = hex(registers[b] - registers[a])
 
 #8XYE - Shifts register left
-#TODO - Shift_left function
 def shift_left(register):
-	return
+	if registers[register] > 127:
+		registers[0xF] = 0x01
+
+	else:
+		registers[0xF] = 0x00
+
+	registers[register] <<= 1
+
+	registers[register] %= 256
+
+
 
 #9XY0 - Skip instruction if a doesn't equal b
 def register_unequal_skip(a, b):
@@ -212,7 +227,7 @@ def jump_first_reg(value):
 
 #CXNN - Set register to a value + random number
 def jump_random(register, value):
-	rand_number = random.randrange(255)
+	rand_number = random.randrange(256)
 	registers[register] = value + rand_number
 
 #TODO DXYN
@@ -254,14 +269,13 @@ def add_to_stack(register):
 #FX55 - Stores group of registers in memory
 def store_reg_in_mem(end):
 	location = I
-	for register in range(hex(end + 1)):
+	for register in range(end + 1):
 		memory[location] = registers[register]
 		location += 2
 
 #FX65 - Reads group of registers from memory
 #QUESTION
-#Won't I need to return something?
-#Or do I need to make a list and then alter it and clear it within this function
+#TODO - They're stored in registers
 def read_from_memory(end):
 	location = I
 	data = []
