@@ -15,6 +15,7 @@ stack = []
 display = []
 keys = []
 op_code = ''
+sprite_lookup = []
 
 
 #---------------------------- Reset Function-----------------------------------
@@ -25,7 +26,32 @@ def reset():
 	#Must include sections so you don't have to code an offset
 	#Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
 	global memory
-	memory = [0x00 for x in range(0x1000)]
+	# memory = [0x00 for x in range(0x1000)]
+	memory = [0xF0, 0x90, 0x90, 0x90, 0xF0,
+	 0x20, 0x60, 0x20, 0x20, 0x70,
+	 0xF0, 0x10, 0xF0, 0x80, 0xF0,
+	 0xF0, 0x10, 0xF0, 0x10, 0xF0,
+	 0x90, 0x90, 0xF0, 0x10, 0x10,
+	 0xF0, 0x80, 0xF0, 0x10, 0xF0,
+	 0xF0, 0x80, 0xF0, 0x90, 0xF0,
+	 0xF0, 0x10, 0x20, 0x40, 0x40,
+	 0xF0, 0x90, 0xF0, 0x90, 0xF0,
+	 0xF0, 0x90, 0xF0, 0x10, 0xF0,
+	 0xF0, 0x90, 0xF0, 0x90, 0x90,
+	 0xE0, 0x90, 0xE0, 0x90, 0xE0,
+	 0xF0, 0x80, 0x80, 0x80, 0xF0,
+	 0xE0, 0x90, 0x90, 0x90, 0xE0,
+	 0xF0, 0x80, 0xF0, 0x80, 0xF0,
+	 0xF0, 0x80, 0xF0, 0x80, 0x80
+	 ]
+
+
+	memory.extend([0x00] * 4016)
+
+	#TODO Look up the index of the sprite in this list and then times it by 5
+	#That's your location in memory!
+	global sprite_lookup
+	sprite_lookup = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F']
 
 	#Registers
 	#QUESTION - can this hex value be written as 0x0 because it will never go above 15 aka F?
@@ -209,7 +235,6 @@ def shift_left(register):
 		registers[0xF] = 0x00
 
 	registers[register] <<= 1
-
 	registers[register] %= 256
 
 
@@ -234,11 +259,17 @@ def jump_random(register, value):
 	rand_number = random.randrange(256)
 	registers[register] = value + rand_number
 
-#TODO DXYN
+#TODO DXYN - Draws to the screen
+def draw():
+	return
 
-#TODO EX9E
+#TODO EX9E/EXA1 - We test whether or not a key was pressed in the register passed
+def key_press(register):
+	global PC
+	#Run input function and check what gets stored?
+	return
 
-#TODO EXA1
+
 
 #FX07 - Set register to value of timer
 def set_reg_to_delay(register):
@@ -266,6 +297,11 @@ def add_to_stack(register):
 
 #FX29 - location of sprite
 #TODO
+def sprite(register):
+	global I
+	global sprite_lookup
+	char = registers[register]
+	I = sprite_lookup.index(char) * 5
 
 #FX33 - Binary coded decimal representation
 #TODO
@@ -338,108 +374,101 @@ def step():
 	if op_code[0] == "1":
 		address_jump(nnn)
 
-	# elif op_code[0] == "2":
-	# 	subroutine(nnn)
-	#
-	# elif op_code[0] == "3":
-	# 	skip_if_equal(x, nn)
+	elif op_code[0] == "2":
+		subroutine(nnn)
 
-	# elif op_code[0] == "4":
-	# 	skip_if_unequal(x, nn)
-	#
-	# elif op_code[0] == "5":
-	# 	register_equal_skip(x, y)
-	#
-	# elif op_code[0] == "6":
-	# 	set_register(x, nn)
-	#
-	# elif op_code[0] == "7":
-	# 	register_add_value(x, nn)
+	elif op_code[0] == "3":
+		skip_if_equal(x, nn)
+
+	elif op_code[0] == "4":
+		skip_if_unequal(x, nn)
+
+	elif op_code[0] == "5":
+		register_equal_skip(x, y)
+
+	elif op_code[0] == "6":
+		set_register(x, nn)
+
+	elif op_code[0] == "7":
+		register_add_value(x, nn)
 
 	#Multiple 8 opcodes
-	# elif op_code[0] == "8":
-	# 	if op_code[3] == "0":
-	# 		register_a_b_set(x, y)
-	#
-	# 	if op_code[3] == "1":
-	# 		or_register(x, y)
-	#
-	# 	if op_code[3] == "2":
-	# 		and_register(x, y)
-	#
-	# 	if op_code[3] == "3":
-	# 		xor_register(x, y)
-	#
-	# 	if op_code[3] == "4":
-	# 		add_two_registers(x, y)
-	#
-	# 	if op_code[3] == "5":
-	# 		registers_subtract(x, y)
-	#
-	#
-	# 	if op_code[3] == "6":
-	# 		shift_right(x)
-	#
-	# 	if op_code[3] == "7":
-	#		registers_subtract(y, x)
+	elif op_code[0] == "8":
+		if op_code[3] == "0":
+			register_a_b_set(x, y)
 
-	#
-	# 	if op_code[3] == "E":
-	# 		return
-	#
-	# elif op_code[0] == "9":
-	# 	register_unequal_skip(x, y)
-	#
-	# elif op_code[0] == "A":
-	# 	set_I(nnn)
-	#
-	# elif op_code[0] == "B":
-	# 	jump_first_reg(nnn)
-	#
-	# elif op_code[0] == "C":
-	# 	jump_random(x, nn)
-	#
-	# elif op_code[0] == "D":
-	# 	return
-	#
-	# elif op_code[0] == "E":
-	# 	if op_code[3] == "E":
-	# 		return
-	#
-	# 	else:
-	# 		return
-	#
+		if op_code[3] == "1":
+			or_register(x, y)
+
+		if op_code[3] == "2":
+			and_register(x, y)
+
+		if op_code[3] == "3":
+			xor_register(x, y)
+
+		if op_code[3] == "4":
+			add_two_registers(x, y)
+
+		if op_code[3] == "5":
+			registers_subtract(x, y)
+
+
+		if op_code[3] == "6":
+			shift_right(x)
+
+		if op_code[3] == "7":
+			registers_subtract(y, x)
+
+
+		if op_code[3] == "E":
+			return
+
+	elif op_code[0] == "9":
+		register_unequal_skip(x, y)
+
+	elif op_code[0] == "A":
+		set_I(nnn)
+
+	elif op_code[0] == "B":
+		jump_first_reg(nnn)
+
+	elif op_code[0] == "C":
+		jump_random(x, nn)
+
+	elif op_code[0] == "D":
+		draw()
+
+	elif op_code[0] == "E":
+		key_press(x)
 
 	#Multiple F opcodes
-	# elif op_code[0] == "F":
-	# 	if op_code[3] == "7":
-	# 		set_reg_to_delay(x)
-	#
-	# 	elif op_code[3] == "A":
-	# 		input_to_register(x)
-	#
-	# 	elif op_code[2:3] == "15":
-	# 		set_delay_timer(x)
-	#
-	# 	elif op_code[3] == "8":
-	# 		set_sound_timer(x)
-	#
-	# 	elif op_code[3] == "E":
-	# 		add_to_stack(x)
-	#
-	# 	elif op_code[3] == "9":
-	# 		return
-	#
-	# 	elif op_code[3] == "3":
-	# 		return
-	#
-	# 	elif op_code[2:3] == "55":
-	# 		store_reg_in_mem(x)
-	#
-	# 	elif op_code[2:3] == "65":
-	# 		read_from_memory(x)
+	elif op_code[0] == "F":
+		if op_code[3] == "7":
+			set_reg_to_delay(x)
 
+		elif op_code[3] == "A":
+			input_to_register(x)
 
+		elif op_code[2:3] == "15":
+			set_delay_timer(x)
+
+		elif op_code[3] == "8":
+			set_sound_timer(x)
+
+		elif op_code[3] == "E":
+			add_to_stack(x)
+
+		elif op_code[3] == "9":
+			return
+
+		elif op_code[3] == "3":
+			return
+
+		elif op_code[2:3] == "55":
+			store_reg_in_mem(x)
+
+		elif op_code[2:3] == "65":
+			read_from_memory(x)
 
 
 #Display loop (infinite) - use pygame

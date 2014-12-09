@@ -11,14 +11,6 @@ import main
 class Test_Chip_8(unittest.TestCase):
     def setUp(self):
         main.reset()
-        # main.PC = 0x300 # not 0x200, to check execution that's partially into and not validate only fresh executions
-        # main.stack = []
-        # main.registers = [0x00 for x in range(0x10)]
-        # main.I = 0x0000
-        #
-        # main.delay_timer = 0
-        # main.sound_timer = 0
-        # main.memory = [0x00 for x in range(0x1000)]
 
     def test_jump(self):
         print
@@ -328,6 +320,15 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.I, 0x8D)
         print "Addition to I has passed"
 
+    def test_sprite(self):
+        print
+        print "Testing the location of sprites function"
+        main.set_register(5, 7)
+        main.sprite(5)
+        self.assertEqual(main.I, 0x23)
+        print "The sprite location function passed"
+
+
     def test_memory_store(self):
         print
         print "Testing memory store function."
@@ -360,7 +361,6 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.registers[1], 0x02)
         self.assertEqual(main.registers[2], 0x03)
         print "Memory read function has passed"
-
 
 if __name__ == '__main__':
     unittest.main()
