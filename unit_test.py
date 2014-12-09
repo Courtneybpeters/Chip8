@@ -328,6 +328,8 @@ class Test_Chip_8(unittest.TestCase):
         print "Addition to I has passed"
 
     def test_memory_store(self):
+        print
+        print "Testing memory store function."
         main.set_I(0x802)
 
         main.set_register(0, 0x0A)
@@ -344,20 +346,19 @@ class Test_Chip_8(unittest.TestCase):
         self.assertEqual(main.I, 0x802)
         print "Memory store has passed"
 
+    def test_memory_read(self):
+        print
+        print "Testing memory read into registers function."
+        main.set_I(0x802)
+        main.memory[0x802] = 0x01
+        main.memory[0x804] = 0x02
+        main.memory[0x806] = 0x03
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        main.read_from_memory(0x806)
+        self.assertEqual(main.registers[0], 0x01)
+        self.assertEqual(main.registers[1], 0x02)
+        self.assertEqual(main.registers[2], 0x02)
+        print "Memory read function has passed"
 
 
 if __name__ == '__main__':

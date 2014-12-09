@@ -2,55 +2,69 @@ import random
 
 #Address QUESTIONs and TODO (Ctrl+ Shift + T)
 
-#TODO Cowgod reference - diff between program counter and I (is I the stack?)
-#I is my program counter according to cow god ref
-
 #--------------------- Initialization --------------------------------------
+
 finished = False
-
-#Must include sections so you don't have to code an offset
-#Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
-memory = [0x00 for x in range(0x1000)]
-
-#Clears memory
-def clear_memory():
-	for byte in memory:
-		byte = 0x00
-
-#Registers
-#QUESTION - can this hex value be written as 0x0 because it will never go above 15 aka F?
-#or is it because its 8-bits (aka two hex values?)
-registers = [0x00 for x in range(0x10)]
-
-#Register I - used for drawing
-I = 0x0000
-
-#Program counter so execution can jump to different points in memory.
-#Starts at where programs start within the memory.
-PC = 0x200
-
-#Timers - count down until 0
+memory = []
+registers[]
+I = 0x00
+PC = 0x00
 delay_timer = 0
-
-#Sound is played only when this is at 0
 sound_timer = 0
-
-#Stack - pretty much a bookmark for addresses with jumps of execution. Think LIFO
 stack = []
-
-
-#Display - 64 X 32
-#List comprehension of a list comprehension -- a 64 item array of 32 item arrays.
-display = [[True for x in range(64)] for x in range(32)]
-
-
-#Input - Hexidecimal keyboard created using list comprehension
-#Boolean because we only need to know if key has been pressed or not. Using hex
-#value because the keyboard is oringinally a hex one.
-keys = [False for x in range(0x10)]
-
-#Opcode variable needs to be global
+display = []
+keys = []
 op_code = ''
+
+
+#---------------------------- Reset Function-----------------------------------
+
+def reset():
+	finished = False
+
+	#Must include sections so you don't have to code an offset
+	#Bytes are in hex, memory is a list of bytes (8-bits) so hex is more helpful.
+	memory = [0x00 for x in range(0x1000)]
+
+	#Clears memory
+	def clear_memory():
+		for byte in memory:
+			byte = 0x00
+
+	#Registers
+	#QUESTION - can this hex value be written as 0x0 because it will never go above 15 aka F?
+	#or is it because its 8-bits (aka two hex values?)
+	registers = [0x00 for x in range(0x10)]
+
+	#Register I - used for drawing
+	I = 0x0000
+
+	#Program counter so execution can jump to different points in memory.
+	#Starts at where programs start within the memory.
+	PC = 0x200
+
+	#Timers - count down until 0
+	delay_timer = 0
+
+	#Sound is played only when this is at 0
+	sound_timer = 0
+
+	#Stack - pretty much a bookmark for addresses with jumps of execution. Think LIFO
+	stack = []
+
+
+	#Display - 64 X 32
+	#List comprehension of a list comprehension -- a 64 item array of 32 item arrays.
+	display = [[True for x in range(64)] for x in range(32)]
+
+
+	#Input - Hexidecimal keyboard created using list comprehension
+	#Boolean because we only need to know if key has been pressed or not. Using hex
+	#value because the keyboard is oringinally a hex one.
+	keys = [False for x in range(0x10)]
+
+	#Opcode variable needs to be global
+	op_code = ''
 
 
 
@@ -182,19 +196,6 @@ def shift_right(register):
 
 	registers[register] >>= 1
 
-
-#TODO - Use only the first subtraction function, switch a, b in the parameters
-# 		when you call it.
-#8XY7 - Subtracts a from b, negative subtraction
-def registers_neg_subtract(a, b):
-	if registers[b] > registers[a]:
-		registers[0xF] = 0x01
-
-	else:
-		registers[0xF] = 0x00
-
-	register[a] = hex(registers[b] - registers[a])
-
 #8XYE - Shifts register left
 def shift_left(register):
 	if registers[register] > 127:
@@ -206,7 +207,6 @@ def shift_left(register):
 	registers[register] <<= 1
 
 	registers[register] %= 256
-
 
 
 #9XY0 - Skip instruction if a doesn't equal b
@@ -258,7 +258,7 @@ def set_sound_timer(register):
 #FX1E - Adds register and value of I and sets result as I
 def add_to_stack(register):
 	global I
-	I = I + registers[register]
+	I += registers[register]
 
 #FX29 - location of sprite
 #TODO
@@ -271,16 +271,19 @@ def store_reg_in_mem(end):
 	location = I
 	for register in range(end + 1):
 		memory[location] = registers[register]
-		location += 2
+		location += 1
 
 #FX65 - Reads group of registers from memory
 #QUESTION
 #TODO - They're stored in registers
 def read_from_memory(end):
 	location = I
-	data = []
-	for register in range(hex(end + 1)):
-		data.append(registers[register])
+	count = 0
+	for data in range(location, end + 1):
+		registers[count] = memory[data]
+		count += 1
+		location += 1
+
 
 
 
@@ -374,7 +377,8 @@ def step():
 	# 		shift_right(x)
 	#
 	# 	if op_code[3] == "7":
-	# 		registers_neg_subtract(x, y)
+	#		registers_subtract(y, x)
+
 	#
 	# 	if op_code[3] == "E":
 	# 		return
