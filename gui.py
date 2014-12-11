@@ -1,4 +1,5 @@
-from Tkinter import Tk, Frame, BOTH
+from Tkinter import Tk, BOTH
+from ttk import Frame, Label, Style
 
 
 #Is (Frame) telling it to derive from the class frame that we imported?
@@ -6,18 +7,18 @@ class Window(Frame):
 
     def __init__(self, parent):
         Frame.__init__(self, parent)
+
         self.parent = parent
         self.initUI()
         self.centerWindow()
 
 
     def initUI(self):
-        self.parent.title("Example GUI")
+        self.parent.title("Courtney's Don't Hate Chip-8")
         self.pack(fill=BOTH, expand = 1)
-        self.grid(column=0, row=0)
-        self.columnconfigure(0, weight = 1)
-        self.rowconfigure(0, weight = 1)
-        intro = Label(self, text = "Chip-8").grid(column=3, row=1, sticky=W, background="white")
+        title = Label(self, text="Please load your rom.")
+        title.place(x=270, y = 120)
+
 
     def centerWindow(self):
         w = 640
@@ -35,7 +36,6 @@ def main():
 
     root = Tk()
     app = Window(root)
-    ttk.Label(app, text = "Chip 8").grid(column = 3, row = 1, sticky = W, color = "white")
     root.mainloop()
 
 if __name__ == "__main__":
