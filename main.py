@@ -11,59 +11,61 @@ import chip8
 # display[31][0] = False
 # display[31][63] = False
 
-chip8.reset()
+def main(filename)
 
-rom_path = raw_input("Enter the path of your rom: ")
-chip8.load_rom(rom_path)
-chip8.hex_dump("hexdump.txt", chip8.memory)
+    chip8.reset()
 
-pygame.init()
+    rom_path = raw_input("Enter the path of your rom: ")
+    chip8.load_rom(rom_path)
+    chip8.hex_dump("hexdump.txt", chip8.memory)
 
-size = 10
+    pygame.init()
 
-fps = pygame.time.Clock()
+    size = 10
 
-dark = pygame.Color(93, 1, 130)
-light = pygame.Color(229, 204, 255)
+    fps = pygame.time.Clock()
 
-pygame.display.set_caption("Courtney Peters Chip-8 Emulator")
+    dark = pygame.Color(93, 1, 130)
+    light = pygame.Color(229, 204, 255)
 
-while True:
+    pygame.display.set_caption("Courtney Peters Chip-8 Emulator")
 
-    screen = pygame.display.set_mode((64 * size, 32 * size), pygame.RESIZABLE)
+    while True:
 
-    for y, row in enumerate(chip8.display):
-        for x, pixel in enumerate(row):
+        screen = pygame.display.set_mode((64 * size, 32 * size), pygame.RESIZABLE)
 
-            if pixel == True:
-                screen.fill(dark, (x * size, y * size, size, size))
+        for y, row in enumerate(chip8.display):
+            for x, pixel in enumerate(row):
 
-            else:
-                screen.fill(light, (x * size, y * size, size, size))
+                if pixel == True:
+                    screen.fill(dark, (x * size, y * size, size, size))
 
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+                else:
+                    screen.fill(light, (x * size, y * size, size, size))
 
-        elif event.type == KEYDOWN:
-            if event.key == K_EQUALS:
-                size += 2
-            if event.key == K_MINUS:
-                size = max(2, size - 2)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
 
-            #TODO - Map each key to input array (keys list)
+            elif event.type == KEYDOWN:
+                if event.key == K_EQUALS:
+                    size += 2
+                if event.key == K_MINUS:
+                    size = max(2, size - 2)
 
-    pygame.display.update()
+                #TODO - Map each key to input array (keys list)
 
-    x_axis, y_axis = 0, 0
+        pygame.display.update()
 
-    for i in range(5):
-        chip8.step()
+        x_axis, y_axis = 0, 0
 
-    chip8.delay_timer = max(chip8.delay_timer - 1, 0)
-    chip8.sound_timer = max(chip8.sound_timer - 1, 0)
+        for i in range(5):
+            chip8.step()
+
+        chip8.delay_timer = max(chip8.delay_timer - 1, 0)
+        chip8.sound_timer = max(chip8.sound_timer - 1, 0)
 
 
 
-    fps.tick(60)
+        fps.tick(60)
