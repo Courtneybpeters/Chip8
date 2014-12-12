@@ -1,5 +1,6 @@
 from Tkinter import Tk, BOTH
-from ttk import Frame, Label, Style
+from ttk import Frame, Label, Button, Style
+from tkFileDialog import *
 
 
 #Is (Frame) telling it to derive from the class frame that we imported?
@@ -14,10 +15,11 @@ class Window(Frame):
 
 
     def initUI(self):
-        self.parent.title("Courtney's Don't Hate Chip-8")
+        self.parent.title("Courtney's Don't H8 Chip-8")
         self.pack(fill=BOTH, expand = 1)
         title = Label(self, text="Please load your rom.")
-        title.place(x=270, y = 120)
+        title.pack()
+        browse = Button(self, text="Browse", command=askopenfilename).pack()
 
 
     def centerWindow(self):
